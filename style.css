@@ -9,71 +9,71 @@
 /* ---------- CSS Custom Properties (Design Tokens) ---------- */
 :root {
   /* Color Palette */
-  --clr-void:         #04030a;
-  --clr-deep:         #080614;
-  --clr-navy:         #0d0b22;
-  --clr-indigo-dark:  #120e30;
-  --clr-indigo:       #1a1545;
-  --clr-indigo-mid:   #221c5e;
+  --clr-void: #04030a;
+  --clr-deep: #080614;
+  --clr-navy: #0d0b22;
+  --clr-indigo-dark: #120e30;
+  --clr-indigo: #1a1545;
+  --clr-indigo-mid: #221c5e;
 
-  --clr-gold:         #d4a017;
-  --clr-gold-light:   #e8b84b;
-  --clr-gold-bright:  #f5cc6a;
-  --clr-amber:        #c47a15;
-  --clr-amber-glow:   rgba(212, 160, 23, 0.25);
-  --clr-gold-glow:    rgba(232, 184, 75, 0.15);
+  --clr-gold: #d4a017;
+  --clr-gold-light: #e8b84b;
+  --clr-gold-bright: #f5cc6a;
+  --clr-amber: #c47a15;
+  --clr-amber-glow: rgba(212, 160, 23, 0.25);
+  --clr-gold-glow: rgba(232, 184, 75, 0.15);
 
-  --clr-crimson:      #8b1a1a;
+  --clr-crimson: #8b1a1a;
   --clr-crimson-glow: rgba(139, 26, 26, 0.3);
 
-  --clr-jade:         #1a4a3a;
-  --clr-jade-light:   #2d7a5e;
-  --clr-jade-glow:    rgba(45, 122, 94, 0.3);
+  --clr-jade: #1a4a3a;
+  --clr-jade-light: #2d7a5e;
+  --clr-jade-glow: rgba(45, 122, 94, 0.3);
 
-  --clr-text-primary:   #f5e6c8;
+  --clr-text-primary: #f5e6c8;
   --clr-text-secondary: #c9b88a;
-  --clr-text-muted:     #7a6b50;
-  --clr-text-faint:     #4a3f2e;
+  --clr-text-muted: #7a6b50;
+  --clr-text-faint: #4a3f2e;
 
-  --clr-border:       rgba(212, 160, 23, 0.2);
+  --clr-border: rgba(212, 160, 23, 0.2);
   --clr-border-hover: rgba(212, 160, 23, 0.5);
-  --clr-glass:        rgba(18, 14, 48, 0.7);
-  --clr-glass-light:  rgba(26, 21, 69, 0.5);
+  --clr-glass: rgba(18, 14, 48, 0.7);
+  --clr-glass-light: rgba(26, 21, 69, 0.5);
 
   /* Typography */
-  --font-display:  'Cinzel Decorative', 'Palatino Linotype', serif;
-  --font-serif:    'Playfair Display', 'Georgia', serif;
-  --font-body:     'Inter', 'Helvetica Neue', sans-serif;
+  --font-display: 'Cinzel Decorative', 'Palatino Linotype', serif;
+  --font-serif: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
   --font-javanese: 'Noto Serif Javanese', serif;
 
   /* Spacing */
-  --space-xs:   0.25rem;
-  --space-sm:   0.5rem;
-  --space-md:   1rem;
-  --space-lg:   1.5rem;
-  --space-xl:   2rem;
-  --space-2xl:  3rem;
-  --space-3xl:  4rem;
-  --space-4xl:  6rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
 
   /* Border Radius */
-  --radius-sm:  0.375rem;
-  --radius-md:  0.75rem;
-  --radius-lg:  1.25rem;
-  --radius-xl:  2rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 2rem;
   --radius-full: 9999px;
 
   /* Transitions */
-  --transition-fast:   150ms ease;
-  --transition-base:   300ms ease;
-  --transition-slow:   600ms ease;
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 600ms ease;
   --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Shadows */
-  --shadow-glow-gold:   0 0 30px rgba(212, 160, 23, 0.3), 0 0 60px rgba(212, 160, 23, 0.1);
-  --shadow-glow-sm:     0 0 15px rgba(212, 160, 23, 0.2);
-  --shadow-card:        0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-raised:      0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-glow-gold: 0 0 30px rgba(212, 160, 23, 0.3), 0 0 60px rgba(212, 160, 23, 0.1);
+  --shadow-glow-sm: 0 0 15px rgba(212, 160, 23, 0.2);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
 
   /* Container */
   --container-max: 1100px;
@@ -81,7 +81,9 @@
 }
 
 /* ---------- Reset & Base ---------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -104,12 +106,24 @@ body {
 }
 
 /* ---------- Scrollbar ---------- */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--clr-deep); }
-::-webkit-scrollbar-thumb { background: var(--clr-gold); border-radius: var(--radius-full); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--clr-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--clr-gold);
+  border-radius: var(--radius-full);
+}
 
 /* ---------- Selection ---------- */
-::selection { background: rgba(212, 160, 23, 0.3); color: var(--clr-gold-bright); }
+::selection {
+  background: rgba(212, 160, 23, 0.3);
+  color: var(--clr-gold-bright);
+}
 
 /* ---------- Focus Styles ---------- */
 :focus-visible {
@@ -121,8 +135,10 @@ body {
 /* ---------- Particle Canvas ---------- */
 #particleCanvas {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 0;
   opacity: 0.6;
@@ -146,31 +162,47 @@ body {
 }
 
 .orb-1 {
-  width: 600px; height: 600px;
+  width: 600px;
+  height: 600px;
   background: radial-gradient(circle, #3b2a7a, transparent);
-  top: -200px; left: -200px;
+  top: -200px;
+  left: -200px;
   animation-delay: 0s;
 }
 
 .orb-2 {
-  width: 500px; height: 500px;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(circle, #7a2a1a, transparent);
-  bottom: -150px; right: -100px;
+  bottom: -150px;
+  right: -100px;
   animation-delay: -7s;
 }
 
 .orb-3 {
-  width: 400px; height: 400px;
+  width: 400px;
+  height: 400px;
   background: radial-gradient(circle, #1a4a3a, transparent);
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   animation-delay: -14s;
 }
 
 @keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(30px, -30px) scale(1.05); }
-  66%       { transform: translate(-20px, 20px) scale(0.95); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
 }
 
 /* ---------- Container ---------- */
@@ -243,19 +275,22 @@ body {
 }
 
 @keyframes heroZoom {
-  from { transform: scale(1.05); }
-  to   { transform: scale(1.12); }
+  from {
+    transform: scale(1.05);
+  }
+
+  to {
+    transform: scale(1.12);
+  }
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(4, 3, 10, 0.5) 0%,
-    rgba(8, 6, 20, 0.65) 40%,
-    rgba(4, 3, 10, 0.92) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(4, 3, 10, 0.5) 0%,
+      rgba(8, 6, 20, 0.65) 40%,
+      rgba(4, 3, 10, 0.92) 100%);
   z-index: 1;
 }
 
@@ -286,8 +321,15 @@ body {
 }
 
 @keyframes logoPulse {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(212, 160, 23, 0.6)); }
-  50%       { filter: drop-shadow(0 0 16px rgba(212, 160, 23, 0.9)); }
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(212, 160, 23, 0.6));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 16px rgba(212, 160, 23, 0.9));
+  }
 }
 
 .nav-title {
@@ -310,7 +352,8 @@ body {
 }
 
 .badge-dot {
-  width: 7px; height: 7px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #888;
   flex-shrink: 0;
@@ -329,8 +372,15 @@ body {
 }
 
 @keyframes dotPulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .badge-text {
@@ -420,8 +470,17 @@ body {
 }
 
 @keyframes aksaraGlow {
-  0%, 100% { text-shadow: 0 0 20px rgba(212, 160, 23, 0.4); opacity: 0.85; }
-  50%       { text-shadow: 0 0 40px rgba(212, 160, 23, 0.8), 0 0 80px rgba(212, 160, 23, 0.3); opacity: 1; }
+
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(212, 160, 23, 0.4);
+    opacity: 0.85;
+  }
+
+  50% {
+    text-shadow: 0 0 40px rgba(212, 160, 23, 0.8), 0 0 80px rgba(212, 160, 23, 0.3);
+    opacity: 1;
+  }
 }
 
 .hero-subtitle {
@@ -471,8 +530,15 @@ body {
   box-shadow: 0 8px 32px rgba(212, 160, 23, 0.6), 0 0 0 1px rgba(212, 160, 23, 0.4);
 }
 
-.hero-cta:hover::before { opacity: 1; }
-.hero-cta span, .hero-cta svg { position: relative; z-index: 1; }
+.hero-cta:hover::before {
+  opacity: 1;
+}
+
+.hero-cta span,
+.hero-cta svg {
+  position: relative;
+  z-index: 1;
+}
 
 /* ---------- Hero Scroll Indicator ---------- */
 .hero-scroll-indicator {
@@ -491,8 +557,17 @@ body {
 }
 
 @keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(1); }
-  50%       { opacity: 0.8; transform: scaleY(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scaleY(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scaleY(1.1);
+  }
 }
 
 
@@ -533,7 +608,9 @@ body {
 .calculator-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--clr-gold), transparent);
 }
@@ -549,9 +626,17 @@ body {
 }
 
 /* ---------- Form ---------- */
-.calc-form { display: flex; flex-direction: column; gap: var(--space-xl); }
+.calc-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
 
-.form-group { display: flex; flex-direction: column; gap: var(--space-sm); }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
 
 .form-label {
   font-size: 0.8rem;
@@ -561,7 +646,9 @@ body {
   color: var(--clr-gold);
 }
 
-.input-wrapper { position: relative; }
+.input-wrapper {
+  position: relative;
+}
 
 .form-input {
   width: 100%;
@@ -578,14 +665,16 @@ body {
   z-index: 1;
 }
 
-.form-input::placeholder { color: var(--clr-text-muted); }
+.form-input::placeholder {
+  color: var(--clr-text-muted);
+}
 
 .form-input:focus {
   border-color: var(--clr-gold);
   background: rgba(4, 3, 10, 0.8);
 }
 
-.form-input:focus + .input-glow {
+.form-input:focus+.input-glow {
   opacity: 1;
 }
 
@@ -613,60 +702,6 @@ body {
   min-height: 1.2em;
 }
 
-/* ---------- Method Toggle ---------- */
-.method-toggle { display: flex; flex-direction: column; gap: var(--space-md); }
-
-.method-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--clr-gold);
-}
-
-.toggle-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
-}
-
-.toggle-opt input[type="radio"] { display: none; }
-
-.toggle-btn {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2em;
-  padding: var(--space-md) var(--space-lg);
-  background: rgba(4, 3, 10, 0.5);
-  border: 1.5px solid var(--clr-border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  text-align: center;
-}
-
-.toggle-btn:hover {
-  border-color: rgba(212, 160, 23, 0.4);
-  background: rgba(212, 160, 23, 0.05);
-}
-
-.toggle-opt input:checked + .toggle-btn {
-  border-color: var(--clr-gold);
-  background: rgba(212, 160, 23, 0.1);
-  box-shadow: 0 0 12px rgba(212, 160, 23, 0.2);
-}
-
-.toggle-name {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--clr-text-primary);
-}
-
-.toggle-desc {
-  font-size: 0.72rem;
-  color: var(--clr-text-muted);
-}
 
 /* ---------- Submit Button ---------- */
 .submit-btn {
@@ -686,7 +721,9 @@ body {
   box-shadow: 0 6px 24px rgba(212, 160, 23, 0.35);
 }
 
-.submit-btn:active { transform: translateY(0); }
+.submit-btn:active {
+  transform: translateY(0);
+}
 
 .submit-btn:disabled {
   opacity: 0.6;
@@ -726,7 +763,9 @@ body {
   transition: opacity var(--transition-base);
 }
 
-.submit-btn:hover .btn-glow { opacity: 1; }
+.submit-btn:hover .btn-glow {
+  opacity: 1;
+}
 
 /* =====================================================
    RESULT SECTION
@@ -760,11 +799,20 @@ body {
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.result-container[hidden] { display: none; }
+.result-container[hidden] {
+  display: none;
+}
 
 .result-card {
   background: var(--clr-glass);
@@ -780,7 +828,9 @@ body {
 .result-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--clr-gold), transparent);
 }
@@ -810,116 +860,165 @@ body {
   color: var(--clr-text-primary);
 }
 
-/* ---------- Final Result ---------- */
-.final-result-display {
-  text-align: center;
-  padding: var(--space-xl) 0;
+/* ---------- Tarot Card Styling ---------- */
+.tarot-card-wrapper {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
-.result-symbol {
-  font-size: 4rem;
-  margin-bottom: var(--space-md);
-  animation: symbolFloat 3s ease-in-out infinite;
-}
-
-@keyframes symbolFloat {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-8px); }
-}
-
-.result-category {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--space-sm);
-}
-
-.result-meaning {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
-  font-style: italic;
-  color: var(--clr-gold-light);
-  margin-bottom: var(--space-lg);
-}
-
-.result-description {
-  font-size: 0.95rem;
-  line-height: 1.8;
-  color: var(--clr-text-secondary);
+/* ---------- Custom Graphic Card (SangSriBG.png: 825 x 1425) ---------- */
+.tarot-custom-card {
+  position: relative;
+  width: 100%;
   max-width: 500px;
-  margin-inline: auto;
-  margin-bottom: var(--space-lg);
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 160, 23, 0.25);
+  border: 2px solid rgba(212, 160, 23, 0.4);
+  line-height: 0;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.result-method-badge {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 0.35em 1em;
-  background: rgba(212, 160, 23, 0.1);
-  border: 1px solid var(--clr-border);
+.tarot-custom-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 50px rgba(212, 160, 23, 0.4);
+}
+
+.tarot-custom-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.tarot-custom-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* 
+ * Koordinat Nama:
+ * x: 97, y: 662, w: 631, h: 60 (pada basis 825 x 1425)
+ * left: (97/825) = 11.76%, top: (662/1425) = 46.46%
+ * width: (631/825) = 76.48%, height: (60/1425) = 4.21%
+ * font: Cinzel Decorative, size: 50px (pada 825px) -> ~6.06cqi, weight: 900 (BLACK)
+ */
+.tarot-custom-name {
+  position: absolute;
+  left: 11.758%;
+  top: 48.0%;
+  /* Sedikit diturunkan agar pas di tengah frame pita nama */
+  width: 76.485%;
+  height: 4.8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.95rem);
+  font-weight: 900;
+  /* BLACK */
+  letter-spacing: 0.08em;
+  color: #1a1612;
+  /* Warna hitam pekat elegan */
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+  line-height: 1;
+}
+
+/* 
+ * Koordinat Deskripsi:
+ * x: 64, y: 810, w: 696, h: 390 (pada basis 825 x 1425)
+ * left: (64/825) = 7.76%, top: (810/1425) = 56.84%
+ * width: (696/825) = 84.36%, height: (390/1425) = 27.37%
+ * font: Cinzel Decorative, size: 35px (pada 825px) -> ~4.24cqi, weight: 700 (BOLD)
+ */
+.tarot-custom-desc {
+  position: absolute;
+  left: 7.758%;
+  top: 56.842%;
+  width: 84.364%;
+  height: 27.368%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-size: clamp(0.72rem, 2.1vw, 1.15rem);
+  font-weight: 700;
+  /* BOLD */
+  line-height: 1.2;
+  /* Jarak antar baris teks (42px pada font 35px: 42/35 = 1.2) */
+  color: #1a1612;
+  /* Warna hitam elegan */
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
+  overflow-y: auto;
+  padding: 0.2em 0.5em;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  /* Sembunyikan scrollbar di Firefox */
+  -ms-overflow-style: none;
+  /* Sembunyikan scrollbar di IE/Edge */
+}
+
+/* Sembunyikan scrollbar kuning di Chrome, Safari, dan Edge WebKit */
+.tarot-custom-desc::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Action Buttons & Download Card Button */
+.card-action-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.download-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(196, 122, 21, 0.3));
+  border: 1.5px solid var(--clr-gold);
   border-radius: var(--radius-full);
-  color: var(--clr-text-muted);
+  padding: 0.75em 1.6em;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--clr-gold-light);
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 160, 23, 0.2);
+  transition: all var(--transition-base);
 }
 
-/* Result themes */
-.theme-lanang .result-category {
-  background: linear-gradient(135deg, #f5d06a, #d4a017);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.download-card-btn:hover {
+  background: linear-gradient(135deg, var(--clr-gold), var(--clr-amber));
+  color: #0d0b18;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 160, 23, 0.5);
+  transform: translateY(-2px);
 }
 
-.theme-manten .result-category {
-  background: linear-gradient(135deg, #a8e6cf, #2d7a5e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.download-card-btn:active {
+  transform: translateY(0);
 }
 
-.theme-rampas .result-category {
-  background: linear-gradient(135deg, #f4a0a0, #c0392b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Animasi Muncul Kartu Tarot */
+@keyframes tarotReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96) rotateX(10deg);
+  }
 
-.theme-sri .result-category {
-  background: linear-gradient(135deg, #f5e642, #d4c017);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.theme-lungguh .result-category {
-  background: linear-gradient(135deg, #a0c4ff, #2563eb);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.theme-gedhong .result-category {
-  background: linear-gradient(135deg, #c3a0ff, #7c3aed);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.theme-lara .result-category {
-  background: linear-gradient(135deg, #ff9f80, #c45c1f);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.theme-pati .result-category {
-  background: linear-gradient(135deg, #b0b0b0, #555555);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0deg);
+  }
 }
 
 /* ---------- Supabase Status Card ---------- */
@@ -934,7 +1033,10 @@ body {
   backdrop-filter: blur(8px);
 }
 
-.supa-icon { color: var(--clr-text-muted); flex-shrink: 0; }
+.supa-icon {
+  color: var(--clr-text-muted);
+  flex-shrink: 0;
+}
 
 .supa-text {
   flex: 1;
@@ -957,7 +1059,8 @@ body {
 }
 
 .supa-indicator {
-  width: 10px; height: 10px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #888;
   flex-shrink: 0;
@@ -1062,7 +1165,9 @@ body {
   margin-bottom: var(--space-md);
 }
 
-.footer-sep { color: var(--clr-border); }
+.footer-sep {
+  color: var(--clr-border);
+}
 
 .footer-copyright {
   font-size: 0.75rem;
@@ -1108,9 +1213,17 @@ body {
 }
 
 @keyframes loadingSpin {
-  from { transform: rotate(0deg) scale(1); }
-  50%  { transform: rotate(180deg) scale(1.2); }
-  to   { transform: rotate(360deg) scale(1); }
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1);
+  }
 }
 
 .loading-text {
@@ -1140,16 +1253,35 @@ body {
    RESPONSIVE
    ===================================================== */
 @media (max-width: 768px) {
-  .calculator-card { padding: var(--space-xl); }
-  .toggle-options { grid-template-columns: 1fr; }
-  .result-card { padding: var(--space-xl); }
-  .hero-content { gap: var(--space-lg); }
+  .calculator-card {
+    padding: var(--space-xl);
+  }
+
+  .toggle-options {
+    grid-template-columns: 1fr;
+  }
+
+  .result-card {
+    padding: var(--space-xl);
+  }
+
+  .hero-content {
+    gap: var(--space-lg);
+  }
 }
 
 @media (max-width: 480px) {
-  .navbar { padding: var(--space-md); }
-  .nav-title { display: none; }
-  .hero-content { padding: var(--space-2xl) var(--space-md); }
+  .navbar {
+    padding: var(--space-md);
+  }
+
+  .nav-title {
+    display: none;
+  }
+
+  .hero-content {
+    padding: var(--space-2xl) var(--space-md);
+  }
 }
 
 /* =====================================================
@@ -1157,8 +1289,10 @@ body {
    ===================================================== */
 .visually-hidden {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -1166,4 +1300,6 @@ body {
 }
 
 /* Ensure Javanese font renders properly */
-.noto-jv { font-family: 'Noto Serif Javanese', serif; }
+.noto-jv {
+  font-family: 'Noto Serif Javanese', serif;
+}

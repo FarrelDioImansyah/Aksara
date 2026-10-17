@@ -30,7 +30,30 @@ Tambahkan package berikut via **Unity Package Manager** atau manual:
   Atau gunakan **WebSocket** langsung (lihat opsi 2 di bawah)
 - **Newtonsoft.Json** (untuk parsing JSON)
 
-### 2. Opsi A — Supabase C# SDK (Direkomendasikan)
+---
+
+### 2. Struktur Data Tabel Supabase
+
+#### A. Tabel `cards` (Master Data Kartu)
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | `INTEGER (PK)` | ID Kartu (1 s.d. 5) |
+| `nama_kartu` | `TEXT` | Nama kartu (Sang Sri, Sang Lungguh, dst) |
+| `deskripsi` | `TEXT` | Makna / deskripsi kartu |
+
+#### B. Tabel `users` (Pengunjung Baru dari Web)
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | `UUID (PK)` | ID unik pengunjung |
+| `created_at` | `TIMESTAMPTZ` | Waktu submit kalkulasi |
+| `nama_latin` | `TEXT` | Nama lengkap pengunjung |
+| `nama_panggilan` | `TEXT` | Nama panggilan pengunjung |
+| `id_kartu` | `INTEGER (FK)` | Relasi ke `cards.id` (1 - 5) |
+| `url_kartu` | `TEXT` | Link gambar kartu PNG di storage `CardPetangen` |
+
+---
+
+### 3. Opsi A — Supabase C# SDK (Direkomendasikan)
 
 ```csharp
 using Supabase;

@@ -1,13 +1,15 @@
 /**
  * petangan.js
  * ============================================================
- * Mesin Kalkulasi Petangan Jawa
- * Implementasi dua metode:
- *   1. Poerwadarminta  — Sisa bagi 3 (Jarak: Lanang / Manten / Rampas)
- *   2. Soemodidjojo    — Sisa bagi 5 (Pancawara: Sri / Lungguh / Gedhong / Lara / Pati)
+ * Mesin Kalkulasi Petangan Jawa — Arkana Tarot Pancawara
+ * Sisa bagi 5:
+ *   1. Sri      -> I. SANG SRI (The Empress of Abundance)
+ *   2. Lungguh  -> II. SANG LUNGGUH (The Sovereign Hierarch)
+ *   3. Gedhong  -> III. SANG GEDHONG (The Grand Architect)
+ *   4. Lara     -> IV. SANG LARA (The Phoenix Warrior)
+ *   0. Pati     -> V. SANG PATI (The Mystic Alchemist)
  *
  * Referensi:
- *   - Poerwadarminta, W.J.S. (1939). Baoesastra Djawa.
  *   - Soemodidjojo (1980). Kitab Primbon Betaljemur Adammakna.
  * ============================================================
  */
@@ -15,125 +17,94 @@
 'use strict';
 
 // ============================================================
-// 1. DEFINISI HASIL METODE POERWADARMINTA (Dibagi 3)
-// ============================================================
-const HASIL_POERWADARMINTA = {
-  1: {
-    key: 'lanang',
-    nama: 'Jarak Lanang',
-    singkat: 'Jiwa Pemenang & Pemimpin Sejati',
-    deskripsi: 'Kamu lahir membawa energi kemenangan yang tak tergoyahkan! Jiwa Jarak Lanang memancarkan wibawa alami, ketenangan batin yang dalam, dan kemampuan memimpin yang menginspirasi semua orang di sekitarmu. Setiap langkahmu membuka jalan baru — kamu adalah cahaya yang menerangi kegelapan dan membawa harapan bagi orang lain.',
-    simbol: '⚔️',
-    warna: 'lanang',
-    sisa: 1,
-    keywords: ['kemenangan', 'kepemimpinan', 'wibawa', 'ketenangan batin', 'menginspirasi'],
-  },
-  2: {
-    key: 'manten',
-    nama: 'Jarak Manten',
-    singkat: 'Jiwa Harmonis & Penuh Cinta',
-    deskripsi: 'Namamu memancarkan energi cinta dan keharmonisan yang luar biasa! Jiwa Jarak Manten dikaruniai kemampuan istimewa untuk menyatukan hati, memperindah hubungan, dan membawa kedamaian ke mana pun melangkah. Keberuntungan dalam kasih sayang dan rezeki selalu mengalir deras untukmu.',
-    simbol: '🌸',
-    warna: 'manten',
-    sisa: 2,
-    keywords: ['cinta', 'harmonis', 'keberuntungan', 'kedamaian', 'rezeki berlimpah'],
-  },
-  0: {
-    key: 'rampas',
-    nama: 'Jarak Rampas',
-    singkat: 'Jiwa Bebas & Penuh Semangat',
-    deskripsi: 'Kamu dikaruniai energi hidup yang luar biasa dan semangat membara yang tak pernah padam! Jiwa Jarak Rampas adalah jiwa petualang sejati — kreatif, spontan, dan mampu beradaptasi di situasi apapun. Kamu adalah magnet kegembiraan; di mana kamu hadir, suasana langsung hidup dan bersemangat!',
-    simbol: '🌊',
-    warna: 'rampas',
-    sisa: 0,
-    keywords: ['bebas', 'semangat membara', 'kreatif', 'petualang', 'penuh pesona'],
-  },
-};
-
-// ============================================================
-// 2. DEFINISI HASIL METODE SOEMODIDJOJO (Dibagi 5 — Pancawara)
+// 1. DEFINISI KARTU TAROT JAWA (Pancawara)
 // ============================================================
 const HASIL_SOEMODIDJOJO = {
   1: {
+    idKartu: 1,
     key: 'sri',
-    nama: 'Sri',
-    singkat: 'Jiwa Kemakmuran & Cahaya Rezeki',
-    deskripsi: 'Sri adalah dewi kemakmuran yang bersemayam dalam namamu! Kamu dianugerahi magnet rezeki yang kuat — kemudahan, kelimpahan, dan keberuntungan senantiasa hadir dalam setiap perjalanan hidupmu. Namamu memancarkan energi emas yang menarik segala kebaikan dan keberkahan.',
+    nomorTarot: 'I',
+    gelarTarot: 'THE EMPRESS OF ABUNDANCE',
+    aksaraJawa: 'ꦱꦿꦶ',
+    nama: 'Sang Sri',
+    bgCard: 'assets/SangSriBG.png',
+    singkat: 'Arkana Kemakmuran, Berkah Alam & Cahaya Emas',
+    deskripsi: 'Sang Sri adalah pancaran Dewi Kesuburan dan Kemakmuran. Kamu dianugerahi tarikan energi emas yang membuka pintu-pintu kemudahan, rezeki berlimpah, dan keharmonisan hidup. Hadirmu menumbuhkan dan menyuburkan apa pun yang kamu sentuh.',
+    pituah: 'Jadikan kelimpahanmu sebagai sumber pengayom bagi mereka yang membutuhkan.',
     simbol: '👑',
     warna: 'sri',
     sisa: 1,
-    keywords: ['kemakmuran', 'rezeki berlimpah', 'beruntung', 'cahaya emas', 'kelimpahan'],
+    keywords: ['Kemakmuran', 'Cahaya Emas', 'Kelimpahan', 'Berkah Alam'],
   },
   2: {
+    idKartu: 2,
     key: 'lungguh',
-    nama: 'Lungguh',
-    singkat: 'Jiwa Terhormat & Penuh Wibawa',
-    deskripsi: 'Lungguh berarti "duduk di atas" — dan kamu memang ditakdirkan untuk bersinar di tempat tertinggi! Jiwa Lungguh membawa aura kehormatan alami, rasa dihargai, dan kepercayaan dari orang-orang di sekitarmu. Karir dan martabatmu terus meningkat bak bintang yang kian terang.',
+    nomorTarot: 'II',
+    gelarTarot: 'THE SOVEREIGN HIERARCH',
+    aksaraJawa: 'ꦭꦸꦁꦒꦸꦃ',
+    nama: 'Sang Lungguh',
+    bgCard: 'assets/SangLungguh.png',
+    singkat: 'Arkana Takhta, Martabat & Wibawa Luhur',
+    deskripsi: 'Lungguh merepresentasikan kedudukan takhta tertinggi. Kamu dilahirkan membawa aura wibawa alami, integritas yang disegani, serta kepercayaan mendalam dari sekelilingmu. Langkahmu ditakdirkan untuk memimpin dan membimbing dengan kehormatan.',
+    pituah: 'Ketinggian derajat adalah amanah; pimpinlah dengan welas asih dan kebijaksanaan.',
     simbol: '🏛️',
     warna: 'lungguh',
     sisa: 2,
-    keywords: ['kehormatan', 'wibawa', 'dipercaya', 'bersinar', 'penuh prestasi'],
+    keywords: ['Kehormatan', 'Wibawa Luhur', 'Takhta', 'Integritas'],
   },
   3: {
+    idKartu: 3,
     key: 'gedhong',
-    nama: 'Gedhong',
-    singkat: 'Jiwa Pembangun & Pemimpin Agung',
-    deskripsi: 'Gedhong — gedung megah yang kokoh — adalah simbol jiwamu! Kamu memiliki kekuatan luar biasa untuk membangun dari nol hingga menjadi monumental, menginspirasi banyak orang, dan meninggalkan warisan yang abadi. Kamu adalah arsitek kehidupan yang visioner dan penuh kejayaan.',
+    nomorTarot: 'III',
+    gelarTarot: 'THE GRAND ARCHITECT',
+    aksaraJawa: 'ꦒꦼꦝꦺꦴꦁ',
+    nama: 'Sang Gedhong',
+    bgCard: 'assets/SangGedhong.png',
+    singkat: 'Arkana Kejayaan, Karya Agung & Fondasi Abadi',
+    deskripsi: 'Gedhong melambangkan sang arsitek peradaban agung. Kamu memiliki ketajaman visi untuk membangun sesuatu yang monumental dari ketiadaan hingga menjadi mahakarya abadi. Energi ciptaan dan daya stabilitasmu menjadi pilar bagi banyak orang.',
+    pituah: 'Bangunlah fondasi yang berakar pada ketulusan agar mahakaryamu kekal melintasi zaman.',
     simbol: '🏯',
     warna: 'gedhong',
     sisa: 3,
-    keywords: ['pembangun', 'visioner', 'pemimpin agung', 'warisan abadi', 'monumental'],
+    keywords: ['Pembangun', 'Visioner', 'Mahakarya', 'Fondasi Abadi'],
   },
   4: {
+    idKartu: 4,
     key: 'lara',
-    nama: 'Lara',
-    singkat: 'Jiwa Tangguh & Pejuang Sejati',
-    deskripsi: 'Lara adalah proses penempaan berlian sejati dalam dirimu! Jiwamu memiliki ketangguhan dan keberanian yang jarang dimiliki orang lain. Setiap tantangan yang kamu hadapi justru memperkuat cahayamu — dari setiap ujian lahir kebijaksanaan tak ternilai dan jiwa yang semakin bersinar.',
+    nomorTarot: 'IV',
+    gelarTarot: 'THE PHOENIX WARRIOR',
+    aksaraJawa: 'ꦭꦫ',
+    nama: 'Sang Lara',
+    bgCard: 'assets/SangSriBG.png', /* Fallback jika file kartu belum ada */
+    singkat: 'Arkana Api Kawah Candradimuka & Pejuang Sejati',
+    deskripsi: 'Lara adalah sang burung Phoenix yang ditempa api penempaan jiwa. Ketangguhan batinmu luar biasa; setiap badai dan rintangan tidak pernah memadamkanmu, melainkan justru mengasahmu menjadi berlian tak ternilai yang bangkit berkali-kali lebih kuat dan bercahaya.',
+    pituah: 'Ujian adalah pupuk keagungan jiwamu; teruslah melangkah tanpa gentar.',
     simbol: '🔥',
     warna: 'lara',
     sisa: 4,
-    keywords: ['tangguh', 'pejuang sejati', 'bijaksana', 'bangkit lebih kuat', 'berlian sejati'],
+    keywords: ['Penempaan Jiwa', 'Pejuang Sejati', 'Daya Tahan', 'Kebangkitan'],
   },
   0: {
+    idKartu: 5,
     key: 'pati',
-    nama: 'Pati',
-    singkat: 'Jiwa Spiritual & Penuh Kebijaksanaan',
-    deskripsi: 'Pati adalah energi transformasi tertinggi — jiwa yang melampaui hal-hal biasa! Kamu memiliki kedalaman spiritual, kepekaan batin, dan kebijaksanaan yang membuatmu unik dan tak tergantikan. Kamu adalah jiwa langka yang mampu melihat keindahan tersembunyi di balik segala sesuatu.',
+    nomorTarot: 'V',
+    gelarTarot: 'THE MYSTIC ALCHEMIST',
+    aksaraJawa: 'ꦥꦠꦶ',
+    nama: 'Sang Pati',
+    bgCard: 'assets/SangSriBG.png', /* Fallback jika file kartu belum ada */
+    singkat: 'Arkana Pintu Transformasi & Kebijaksanaan Spiritual',
+    deskripsi: 'Pati dalam filosofi esoteris adalah gerbang transendensi dan kelahiran kembali. Kamu dianugerahi mata batin yang tajam, kedalaman spiritual, dan intuisi langka yang mampu menyingkap tabir rahasia kehidupan serta mengubah kegelapan menjadi pencerahan murni.',
+    pituah: 'Lepaskan apa yang telah usang untuk menyambut takdir baru yang lebih bercahaya.',
     simbol: '🌙',
     warna: 'pati',
     sisa: 0,
-    keywords: ['spiritual', 'bijaksana', 'mendalam', 'unik & langka', 'penuh makna'],
+    keywords: ['Transformasi', 'Mata Batin', 'Spiritualitas', 'Transendensi'],
   },
 };
 
 // ============================================================
-// 3. FUNGSI KALKULASI UTAMA
+// 2. FUNGSI KALKULASI UTAMA (Dibagi 5 — Pancawara)
 // ============================================================
-
-/**
- * Hitung Petangan Jawa menggunakan metode Poerwadarminta
- * @param {number} totalNeptu - Total nilai neptu nama
- * @returns {{ sisa: number, hasil: Object, formula: string }}
- */
-function hitungPoerwadarminta(totalNeptu) {
-  const pembagi = 3;
-  const sisa = totalNeptu % pembagi;
-  const kaliTerakhir = Math.floor(totalNeptu / pembagi) * pembagi;
-  const hasil = HASIL_POERWADARMINTA[sisa];
-
-  const formula = `${totalNeptu} ÷ ${pembagi} = ${Math.floor(totalNeptu / pembagi)} sisa ${sisa} → ${hasil.nama}`;
-
-  return {
-    metode: 'Poerwadarminta',
-    pembagi,
-    totalNeptu,
-    kali: Math.floor(totalNeptu / pembagi),
-    sisa,
-    hasil,
-    formula,
-    metodeBadge: 'Metode Poerwadarminta · Dibagi 3',
-  };
-}
 
 /**
  * Hitung Petangan Jawa menggunakan metode Soemodidjojo (Pancawara)
@@ -145,7 +116,7 @@ function hitungSoemodidjojo(totalNeptu) {
   const sisa = totalNeptu % pembagi;
   const hasil = HASIL_SOEMODIDJOJO[sisa];
 
-  const formula = `${totalNeptu} ÷ ${pembagi} = ${Math.floor(totalNeptu / pembagi)} sisa ${sisa} → ${hasil.nama}`;
+  const formula = `${totalNeptu} ÷ ${pembagi} = ${Math.floor(totalNeptu / pembagi)} sisa ${sisa} → Kartu ${hasil.nomorTarot} (${hasil.nama})`;
 
   return {
     metode: 'Soemodidjojo',
@@ -155,26 +126,21 @@ function hitungSoemodidjojo(totalNeptu) {
     sisa,
     hasil,
     formula,
-    metodeBadge: 'Metode Soemodidjojo · Pancawara Dibagi 5',
+    metodeBadge: `Arkana Tarot Jawa · Kartu ${hasil.nomorTarot}`,
   };
 }
 
 /**
- * Proses kalkulasi lengkap berdasarkan metode yang dipilih
+ * Proses kalkulasi Petangan
  * @param {number} totalNeptu
- * @param {'poerwadarminta'|'soemodidjojo'} metode
  * @returns {Object}
  */
-function hitungPetangan(totalNeptu, metode = 'poerwadarminta') {
+function hitungPetangan(totalNeptu) {
   if (typeof totalNeptu !== 'number' || totalNeptu < 0) {
     throw new Error('Total neptu harus berupa angka positif.');
   }
 
-  const kalkulasi = metode === 'soemodidjojo'
-    ? hitungSoemodidjojo(totalNeptu)
-    : hitungPoerwadarminta(totalNeptu);
-
-  return kalkulasi;
+  return hitungSoemodidjojo(totalNeptu);
 }
 
 /**
@@ -205,10 +171,8 @@ function validasiNama(nama) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     hitungPetangan,
-    hitungPoerwadarminta,
     hitungSoemodidjojo,
     validasiNama,
-    HASIL_POERWADARMINTA,
     HASIL_SOEMODIDJOJO,
   };
 }
@@ -216,10 +180,8 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
   window.PetanganEngine = {
     hitungPetangan,
-    hitungPoerwadarminta,
     hitungSoemodidjojo,
     validasiNama,
-    HASIL_POERWADARMINTA,
     HASIL_SOEMODIDJOJO,
   };
 }

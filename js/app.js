@@ -13,24 +13,24 @@
 // ============================================================
 const DOM = {
   // Form
-  form:        document.getElementById('petanganForm'),
-  namaInput:   document.getElementById('namaInput'),
-  namaError:   document.getElementById('namaInputError'),
-  submitBtn:   document.getElementById('submitBtn'),
-  resetBtn:    document.getElementById('resetBtn'),
+  form:           document.getElementById('petanganForm'),
+  namaInput:      document.getElementById('namaInput'),
+  panggilanInput: document.getElementById('panggilanInput'),
+  namaError:      document.getElementById('namaInputError'),
+  submitBtn:       document.getElementById('submitBtn'),
+  resetBtn:        document.getElementById('resetBtn'),
+  downloadCardBtn: document.getElementById('downloadCardBtn'),
 
   // Status badge
   statusDot:   document.getElementById('supabaseStatusDot'),
   statusText:  document.getElementById('supabaseStatusText'),
 
-  // Results — hanya Step 03 yang ditampilkan di UI
-  resultContainer:    document.getElementById('resultContainer'),
-  resultSymbol:       document.getElementById('resultSymbol'),
-  resultCategory:     document.getElementById('resultCategory'),
-  resultMeaning:      document.getElementById('resultMeaning'),
-  resultDescription:  document.getElementById('resultDescription'),
-  resultMethodBadge:  document.getElementById('resultMethodBadge'),
-  finalResultDisplay: document.getElementById('finalResultDisplay'),
+  // Results — Format Custom Graphic Card
+  resultContainer: document.getElementById('resultContainer'),
+  tarotCustomCard: document.getElementById('tarotCustomCard'),
+  tarotCustomBg:   document.getElementById('tarotCustomBg'),
+  tarotCustomName: document.getElementById('tarotCustomName'),
+  tarotCustomDesc: document.getElementById('tarotCustomDesc'),
   supabaseMessage:    document.getElementById('supabaseMessage'),
   supabaseIndicator:  document.getElementById('supabaseIndicator'),
 
@@ -61,6 +61,8 @@ async function init() {
   // Setup form handler
   DOM.form.addEventListener('submit', handleFormSubmit);
   DOM.resetBtn.addEventListener('click', handleReset);
+  DOM.downloadCardBtn?.addEventListener('click', handleDownloadCard);
+
 
   // Live validation saat mengetik
   DOM.namaInput.addEventListener('input', () => {
@@ -95,11 +97,13 @@ async function handleFormSubmit(e) {
 
   if (STATE.isProcessing) return;
 
-  const nama = DOM.namaInput.value;
-  const metode = document.querySelector('input[name="method"]:checked')?.value || 'poerwadarminta';
+  const namaLengkap = DOM.namaInput.value.trim();
+  const inputPanggilan = DOM.panggilanInput?.value.trim();
+  // Jika nama panggilan kosong, fallback ke kata pertama nama lengkap
+  const namaPanggilan = inputPanggilan || namaLengkap.split(' ')[0] || namaLengkap;
 
-  // Validasi
-  const validasi = window.PetanganEngine.validasiNama(nama);
+  // Validasi Nama Lengkap (yang dihitung adalah Nama Lengkap)
+  const validasi = window.PetanganEngine.validasiNama(namaLengkap);
   if (!validasi.valid) {
     showError(validasi.error);
     DOM.namaInput.focus();
@@ -123,40 +127,58 @@ async function handleFormSubmit(e) {
       { pct: 90, msg: 'Kalkulasi Petangan Jawa...', delay: 300 },
     ]);
 
-    // === PROSES TRANSLITERASI ===
-    const translitResult = window.HanacarakaEngine.transliterasiHanacaraka(nama);
+    // === PROSES TRANSLITERASI (Menggunakan Nama Lengkap) ===
+    const translitResult = window.HanacarakaEngine.transliterasiHanacaraka(namaLengkap);
 
-    // === PROSES KALKULASI ===
-    const petanganResult = window.PetanganEngine.hitungPetangan(
-      translitResult.totalNeptu,
-      metode
-    );
+    // === PROSES KALKULASI (Metode Pancawara 5) ===
+    const petanganResult = window.PetanganEngine.hitungPetangan(translitResult.totalNeptu);
 
     await setProgress(100, 'Selesai!');
 
-    // === RENDER HASIL ===
-    await renderResults(translitResult, petanganResult, nama);
+    // === RENDER HASIL (Tampilkan Nama Panggilan di Display Tarot) ===
+    await renderResults(translitResult, petanganResult, namaLengkap, namaPanggilan);
 
-    // === SIMPAN KE SUPABASE ===
+    // === SIMPAN KE SUPABASE (Database & Card Image Storage) ===
     updateSupabaseUI('loading');
+
+    STATE.lastResult = { translitResult, petanganResult, namaLengkap, namaPanggilan };
+
+    // Simpan data kalkulasi ke database (termasuk idKartu, deskripsi & pituah untuk Unity)
     const supaResult = await window.SupabaseClient.simpanHasilPetangan({
-      namaLatin:  nama,
-      aksaraJawa: translitResult.aksaraString,
-      totalNeptu: translitResult.totalNeptu,
-      sisaBagi:   petanganResult.sisa,
-      hasilKey:   petanganResult.hasil.key,
-      hasilNama:  petanganResult.hasil.nama,
-      hasilArti:  petanganResult.hasil.singkat,
-      metode:     metode,
-      sessionId:  STATE.sessionId,
+      idKartu:       petanganResult.hasil.idKartu, // 1: Sang Sri, 2: Sang Lungguh, 3: Sang Gedhong, 4: Sang Lara, 5: Sang Pati
+      namaLatin:     namaLengkap,
+      namaPanggilan: namaPanggilan,
+      aksaraJawa:    translitResult.aksaraString,
+      totalNeptu:    translitResult.totalNeptu,
+      sisaBagi:      petanganResult.sisa,
+      hasilKey:      petanganResult.hasil.key,
+      hasilNama:     petanganResult.hasil.nama,
+      hasilArti:     petanganResult.hasil.singkat,
+      deskripsi:     petanganResult.hasil.deskripsi,
+      pituah:        petanganResult.hasil.pituah,
+      metode:        'soemodidjojo',
+      sessionId:     STATE.sessionId,
     });
+
+    // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)
+    try {
+      const cardCanvas = await generateCardCanvas();
+      const cardDataUrl = cardCanvas.toDataURL('image/png');
+      const fileName = `${namaPanggilan.replace(/\s+/g, '_')}_card${petanganResult.hasil.idKartu}.png`;
+      await window.SupabaseClient.uploadCardImageToStorage(
+        cardDataUrl,
+        fileName,
+        petanganResult.hasil.idKartu,
+        supaResult?.id
+      );
+    } catch (cardErr) {
+      console.warn('[App] Upload gambar kartu ke CardPetangen diabaikan/mode demo:', cardErr.message);
+    }
 
     updateSupabaseUI(
       supaResult.success ? (supaResult.demo ? 'demo' : 'success') : 'error',
       supaResult
     );
-
-    STATE.lastResult = { translitResult, petanganResult, nama, metode };
 
   } catch (err) {
     console.error('[App] Error:', err);
@@ -171,15 +193,16 @@ async function handleFormSubmit(e) {
 // ============================================================
 // 5. RENDER HASIL
 // ============================================================
-async function renderResults(translit, petangan, namaAsli) {
+async function renderResults(translit, petangan, namaLengkap, namaPanggilan) {
   // ── STEP 01 & 02 → Console only ──────────────────────────────
   console.groupCollapsed(
-    `%c[Sasmita Aksara] ${namaAsli} — Detail Kalkulasi`,
+    `%c[Sasmita Aksara] ${namaLengkap} (${namaPanggilan}) — Detail Kalkulasi`,
     'color: #d4a017; font-weight: bold; font-size: 13px;'
   );
   console.log('%c[Step 01] Transliterasi Hanacaraka', 'color: #e8b84b; font-weight:bold;');
-  console.log('  Aksara Jawa :', translit.aksaraString);
-  console.log('  Nama Latin  :', namaAsli);
+  console.log('  Aksara Jawa    :', translit.aksaraString);
+  console.log('  Nama Lengkap   :', namaLengkap);
+  console.log('  Nama Panggilan :', namaPanggilan);
   console.table(
     translit.tokens
       .filter(t => t.aksaraData && t.neptu > 0)
@@ -197,7 +220,7 @@ async function renderResults(translit, petangan, namaAsli) {
   DOM.resultContainer.hidden = false;
   DOM.resultContainer.removeAttribute('hidden');
 
-  renderFinalResult(petangan);
+  renderFinalResult(petangan, namaPanggilan);
 
   // Scroll ke hasil dengan smooth
   setTimeout(() => {
@@ -208,31 +231,136 @@ async function renderResults(translit, petangan, namaAsli) {
 
 
 /**
- * Render hasil akhir Petangan
+ * Render hasil akhir Petangan ke Custom Graphic Card
  */
-function renderFinalResult(petangan) {
+function renderFinalResult(petangan, namaPanggilan) {
   const { hasil } = petangan;
 
-  // Reset tema
-  DOM.finalResultDisplay.className = 'final-result-display';
-  DOM.finalResultDisplay.classList.add(`theme-${hasil.key}`);
+  if (DOM.tarotCustomCard) {
+    DOM.tarotCustomCard.style.display = 'block';
 
-  DOM.resultSymbol.textContent = hasil.simbol;
-  DOM.resultCategory.textContent = hasil.nama;
-  DOM.resultMeaning.textContent = hasil.singkat;
-  DOM.resultDescription.textContent = hasil.deskripsi;
-  DOM.resultMethodBadge.textContent = petangan.metodeBadge;
+    const bgImageSrc = hasil.bgCard || 'assets/SangSriBG.png';
+    if (DOM.tarotCustomBg) DOM.tarotCustomBg.src = bgImageSrc;
+    if (DOM.tarotCustomName) DOM.tarotCustomName.textContent = namaPanggilan;
+    if (DOM.tarotCustomDesc) DOM.tarotCustomDesc.textContent = hasil.deskripsi;
 
-  // Animate in
-  [DOM.resultSymbol, DOM.resultCategory, DOM.resultMeaning, DOM.resultDescription].forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    setTimeout(() => {
-      el.style.transition = 'all 0.5s ease';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-    }, i * 150 + 100);
+    // Animate Card Reveal
+    DOM.tarotCustomCard.style.animation = 'none';
+    DOM.tarotCustomCard.offsetHeight; // trigger reflow
+    DOM.tarotCustomCard.style.animation = 'tarotReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards';
+  }
+}
+
+/**
+ * Render kartu ke elemen HTML5 Canvas resolusi tinggi (825x1425)
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+function generateCardCanvas() {
+  return new Promise(async (resolve, reject) => {
+    if (!STATE.lastResult) {
+      return reject(new Error('Belum ada data kartu.'));
+    }
+
+    // Pastikan font Google Font 'Cinzel Decorative' sudah ter-load sebelum render canvas
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+
+    const { petanganResult, namaPanggilan } = STATE.lastResult;
+    const bgSrc = petanganResult.hasil.bgCard || 'assets/SangSriBG.png';
+    const canvas = document.createElement('canvas');
+    canvas.width = 825;
+    canvas.height = 1425;
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      // 1. Gambar latar belakang kartu
+      ctx.drawImage(img, 0, 0, 825, 1425);
+
+      // 2. Render Nama Panggilan
+      // Pada layar: top 48.0% (1425 * 0.48 = 684) + height 4.8% (68.4px) -> center Y = 718.2
+      // Center X: 825 / 2 = 412.5
+      ctx.font = '900 44px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#1a1612';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(namaPanggilan, 412.5, 718);
+
+      // 3. Render Deskripsi Teks
+      // Pada layar: top 56.842% (1425 * 0.56842 = 810px), font 28px agar pas di dalam frame dengan line-height 42px
+      ctx.font = '700 28px "Cinzel Decorative", serif';
+      ctx.fillStyle = '#1a1612';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      const deskripsi = petanganResult.hasil.deskripsi;
+      wrapText(ctx, deskripsi, 412.5, 845, 620, 42); // Jarak antar baris 42px
+
+      resolve(canvas);
+    };
+    img.onerror = (e) => reject(new Error('Gagal memuat gambar kartu untuk export.'));
+    img.src = bgSrc;
   });
+}
+
+/**
+ * Helper untuk word-wrap text di Canvas
+ */
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let curY = y;
+
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    const testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line.trim(), x, curY);
+      line = words[n] + ' ';
+      curY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line.trim(), x, curY);
+}
+
+/**
+ * Handle Download Card
+ */
+async function handleDownloadCard() {
+  if (!STATE.lastResult) return;
+  const originalText = DOM.downloadCardBtn.innerHTML;
+
+  try {
+    DOM.downloadCardBtn.disabled = true;
+    DOM.downloadCardBtn.innerHTML = '<span>Membuat Gambar...</span>';
+
+    const canvas = await generateCardCanvas();
+    const dataUrl = canvas.toDataURL('image/png');
+
+    const namaFile = `Kartu-Sasmita-${STATE.lastResult.namaPanggilan.replace(/\s+/g, '_')}.png`;
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = namaFile;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    DOM.downloadCardBtn.innerHTML = '<span>Tersimpan! ✓</span>';
+    setTimeout(() => {
+      DOM.downloadCardBtn.innerHTML = originalText;
+      DOM.downloadCardBtn.disabled = false;
+    }, 2000);
+  } catch (err) {
+    console.error('[Download Card] Gagal:', err);
+    DOM.downloadCardBtn.innerHTML = originalText;
+    DOM.downloadCardBtn.disabled = false;
+    alert('Gagal mengunduh kartu: ' + err.message);
+  }
 }
 
 // ============================================================

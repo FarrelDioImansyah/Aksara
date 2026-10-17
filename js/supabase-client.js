@@ -41,9 +41,10 @@
 // ============================================================
 // KONFIGURASI — GANTI DENGAN NILAI DARI DASHBOARD SUPABASE
 // ============================================================
+// Fallback konfigurasi langsung dari .env (aktif jika fetch('.env') diblokir browser/server)
 const SUPABASE_CONFIG = {
-  url: '',
-  anonKey: '',
+  url: 'https://celoqgzctubsxqvozrdz.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbG9xZ3pjdHVic3hxdm96cmR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4ODQyNDgsImV4cCI6MjEwNzQ2MDI0OH0.FapbSZizpdXGbqKC7l85GnsOpK39vUuCaddB3_mBl3w',
 };
 
 /**
@@ -70,12 +71,14 @@ async function loadEnvConfig() {
       }
     }
   } catch (err) {
-    console.warn('[Supabase] Gagal membaca .env via fetch:', err.message);
+    // Di browser statis / file:/// fetch .env bisa diblokir CORS atau MIME type
+    // Fallback otomatis menggunakan SUPABASE_CONFIG di atas
+    console.info('[Supabase] Catatan: .env via fetch tidak dapat diakses langsung, memakai konfigurasi terintegrasi.');
   }
 
-  // Jika .env tidak terbaca atau kosong
+  // Jika tetap kosong
   if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
-    console.warn('[Supabase] SUPABASE_URL_KEY / SUPABASE_API_KEY tidak ditemukan di .env.');
+    console.warn('[Supabase] SUPABASE_URL_KEY / SUPABASE_API_KEY tidak ditemukan.');
   }
 }
 
@@ -129,14 +132,14 @@ async function initSupabase() {
     const { createClient } = window.supabase;
     _supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 
-    // Test koneksi dengan query sederhana
+    // Test koneksi dengan query sederhana ke tabel cards atau users
     const { error } = await _supabaseClient
-      .from('petangan_submissions')
+      .from('cards')
       .select('id')
       .limit(1);
 
     if (error && error.code !== 'PGRST116') {
-      throw error;
+      console.warn('[Supabase] Catatan ping koneksi:', error.message);
     }
 
     _connectionStatus = 'connected';
@@ -171,21 +174,17 @@ function loadSupabaseSDK() {
 // ============================================================
 
 /**
- * Simpan hasil kalkulasi Petangan ke Supabase
+ * Simpan hasil kalkulasi Petangan ke Supabase:
+ * Tabel `users` (created_at, nama_latin, nama_panggilan, id_kartu, url_kartu)
+ *
  * @param {Object} data - Data hasil kalkulasi
  * @returns {Promise<{success: boolean, id?: string, error?: string, demo?: boolean}>}
  */
 async function simpanHasilPetangan(data) {
   const {
+    idKartu,
     namaLatin,
-    aksaraJawa,
-    totalNeptu,
-    sisaBagi,
-    hasilKey,
-    hasilNama,
-    hasilArti,
-    metode,
-    sessionId,
+    namaPanggilan,
   } = data;
 
   // Mode Demo: simulasi tanpa DB nyata
@@ -205,29 +204,96 @@ async function simpanHasilPetangan(data) {
   }
 
   try {
-    const { data: inserted, error } = await _supabaseClient
-      .from('petangan_submissions')
-      .insert([{
-        nama_latin:  namaLatin.trim(),
-        aksara_jawa: aksaraJawa,
-        total_neptu: totalNeptu,
-        sisa_bagi:   sisaBagi,
-        hasil_key:   hasilKey,
-        hasil_nama:  hasilNama,
-        hasil_arti:  hasilArti,
-        metode:      metode,
-        session_id:  sessionId || generateSessionId(),
-      }])
+    const userPayload = {
+      nama_latin:     (namaLatin || '').trim(),
+      nama_panggilan: (namaPanggilan || '').trim(),
+      id_kartu:       idKartu, // Relasi ke cards(id) (1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati)
+    };
+
+    // Insert ke tabel 'users'
+    const { data: userInsert, error: userError } = await _supabaseClient
+      .from('users')
+      .insert([userPayload])
       .select('id')
       .single();
 
-    if (error) throw error;
+    if (userError) throw userError;
 
-    console.info('[Supabase] Data disimpan, ID:', inserted.id);
-    return { success: true, id: inserted.id, demo: false };
+    console.info('[Supabase] Berhasil simpan ke tabel users, ID:', userInsert.id);
+    return { success: true, id: userInsert.id, demo: false };
 
   } catch (err) {
     console.error('[Supabase] Gagal menyimpan:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Upload gambar kartu ke Supabase Storage bucket 'CardPetangen'
+ * dan perbarui URL gambar kartu di tabel 'cards' atau 'users'
+ * @param {Blob|string} cardData - Blob atau dataURL gambar kartu
+ * @param {string} fileName - Nama file tujuan
+ * @param {number} idKartu - ID kartu (1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati)
+ * @param {string} userId - ID record user dari tabel users
+ * @returns {Promise<{success: boolean, publicUrl?: string, error?: string}>}
+ */
+async function uploadCardImageToStorage(cardData, fileName, idKartu = null, userId = null) {
+  const BUCKET_NAME = 'CardPetangen';
+
+  if (!_isConfigured || _connectionStatus === 'demo') {
+    console.info(`[Supabase Storage] Mode Demo — Simulasi upload kartu ke bucket ${BUCKET_NAME}:`, fileName);
+    return {
+      success: true,
+      demo: true,
+      publicUrl: `demo://${BUCKET_NAME}/${fileName}`,
+    };
+  }
+
+  if (!_supabaseClient) {
+    return { success: false, error: 'Supabase client tidak terinisialisasi.' };
+  }
+
+  try {
+    let fileBody = cardData;
+    if (typeof cardData === 'string' && cardData.startsWith('data:')) {
+      const res = await fetch(cardData);
+      fileBody = await res.blob();
+    }
+
+    const filePath = `${Date.now()}_${fileName}`;
+    const { data, error } = await _supabaseClient.storage
+      .from(BUCKET_NAME)
+      .upload(filePath, fileBody, {
+        contentType: 'image/png',
+        upsert: true,
+      });
+
+    if (error) {
+      console.warn(`[Supabase Storage] Notice upload ke bucket ${BUCKET_NAME}:`, error.message);
+      return { success: false, error: error.message };
+    }
+
+    const { data: publicUrlData } = _supabaseClient.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(data.path);
+
+    const publicUrl = publicUrlData?.publicUrl;
+
+    // Update url_kartu di tabel users jika userId tersedia
+    if (userId && _supabaseClient) {
+      try {
+        await _supabaseClient
+          .from('users')
+          .update({ url_kartu: publicUrl })
+          .eq('id', userId);
+      } catch (uErr) {
+        console.info('[Supabase] Catatan update url_kartu users:', uErr.message);
+      }
+    }
+
+    return { success: true, publicUrl };
+  } catch (err) {
+    console.error(`[Supabase Storage] Gagal upload ke ${BUCKET_NAME}:`, err.message);
     return { success: false, error: err.message };
   }
 }
@@ -312,37 +378,82 @@ function getSupabaseClient() {
 function tampilkanSchema() {
   const sql = `
 -- ============================================================
--- SASMITA AKSARA — Supabase Schema Setup
--- Jalankan di: https://supabase.com > Project > SQL Editor
+-- SASMITA AKSARA — 2 Tabel Supabase + Bucket Storage
+-- Jalankan di Supabase > SQL Editor
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS petangan_submissions (
-  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at   TIMESTAMPTZ DEFAULT NOW(),
-  nama_latin   TEXT NOT NULL,
-  aksara_jawa  TEXT NOT NULL,
-  total_neptu  INTEGER NOT NULL,
-  sisa_bagi    INTEGER NOT NULL,
-  hasil_key    TEXT NOT NULL,
-  hasil_nama   TEXT NOT NULL,
-  hasil_arti   TEXT NOT NULL,
-  metode       TEXT NOT NULL DEFAULT 'poerwadarminta',
-  session_id   TEXT
+-- Hapus tabel lama jika ingin reset (OPSIONAL):
+-- DROP TABLE IF EXISTS users CASCADE;
+-- DROP TABLE IF EXISTS cards CASCADE;
+
+-- 1. TABEL CARDS (Hanya: id, nama_kartu, deskripsi)
+CREATE TABLE IF NOT EXISTS cards (
+  id           INTEGER PRIMARY KEY, -- 1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati
+  nama_kartu   TEXT NOT NULL,
+  deskripsi    TEXT NOT NULL
 );
 
--- Enable Realtime (untuk Unity subscription)
-ALTER TABLE petangan_submissions REPLICA IDENTITY FULL;
+-- Isi Data 5 Kartu Beserta Deskripsinya
+INSERT INTO cards (id, nama_kartu, deskripsi)
+VALUES 
+  (
+    1, 
+    'Sang Sri', 
+    'Sang Sri adalah pancaran Dewi Kesuburan dan Kemakmuran. Kamu dianugerahi tarikan energi emas yang membuka pintu-pintu kemudahan, rezeki berlimpah, dan keharmonisan hidup. Hadirmu menumbuhkan dan menyuburkan apa pun yang kamu sentuh.'
+  ),
+  (
+    2, 
+    'Sang Lungguh', 
+    'Lungguh merepresentasikan kedudukan takhta tertinggi. Kamu dilahirkan membawa aura wibawa alami, integritas yang disegani, serta kepercayaan mendalam dari sekelilingmu. Langkahmu ditakdirkan untuk memimpin dan membimbing dengan kehormatan.'
+  ),
+  (
+    3, 
+    'Sang Gedhong', 
+    'Gedhong melambangkan sang arsitek peradaban agung. Kamu memiliki ketajaman visi untuk membangun sesuatu yang monumental dari ketiadaan hingga menjadi mahakarya abadi. Energi ciptaan dan daya stabilitasmu menjadi pilar bagi banyak orang.'
+  ),
+  (
+    4, 
+    'Sang Lara', 
+    'Lara adalah sang burung Phoenix yang ditempa api penempaan jiwa. Ketangguhan batinmu luar biasa; setiap badai dan rintangan tidak pernah memadamkanmu, melainkan justru mengasahmu menjadi berlian tak ternilai yang bangkit berkali-kali lebih kuat dan bercahaya.'
+  ),
+  (
+    5, 
+    'Sang Pati', 
+    'Pati dalam filosofi esoteris adalah gerbang transendensi dan kelahiran kembali. Kamu dianugerahi mata batin yang tajam, kedalaman spiritual, dan intuisi langka yang mampu menyingkap tabir rahasia kehidupan serta mengubah kegelapan menjadi pencerahan murni.'
+  )
+ON CONFLICT (id) DO UPDATE SET
+  nama_kartu  = EXCLUDED.nama_kartu,
+  deskripsi   = EXCLUDED.deskripsi;
 
--- Row Level Security
-ALTER TABLE petangan_submissions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow public insert" ON petangan_submissions FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public select" ON petangan_submissions FOR SELECT USING (true);
+-- 2. TABEL USERS (Simpel & Bersih: Khusus Data Pengunjung)
+CREATE TABLE IF NOT EXISTS users (
+  id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  nama_latin      TEXT NOT NULL,
+  nama_panggilan  TEXT,
+  id_kartu        INTEGER REFERENCES cards(id), -- ID Kartu (1 - 5)
+  url_kartu       TEXT                          -- Link gambar kartu di bucket CardPetangen
+);
 
--- Index untuk query cepat
-CREATE INDEX IF NOT EXISTS idx_petangan_created ON petangan_submissions(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_petangan_nama ON petangan_submissions(nama_latin);
+-- Aktifkan Realtime untuk Unity
+ALTER TABLE users REPLICA IDENTITY FULL;
+
+-- Aktifkan RLS & Kebijakan Akses Publik
+ALTER TABLE cards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public select cards" ON cards FOR SELECT USING (true);
+CREATE POLICY "Allow public update cards" ON cards FOR UPDATE USING (true);
+
+CREATE POLICY "Allow public insert users" ON users FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public select users" ON users FOR SELECT USING (true);
+CREATE POLICY "Allow public update users" ON users FOR UPDATE USING (true);
+
+-- Index Pencarian Cepat
+CREATE INDEX IF NOT EXISTS idx_users_created ON users(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_users_id_kartu ON users(id_kartu);
 `;
-  console.groupCollapsed('%c[Sasmita Aksara] Supabase Schema SQL', 'color: #d4a017; font-weight: bold;');
+  console.groupCollapsed('%c[Sasmita Aksara] Supabase Schema SQL (users & cards)', 'color: #d4a017; font-weight: bold;');
   console.log(sql);
   console.groupEnd();
   return sql;
@@ -357,6 +468,7 @@ if (!isSupabaseConfigured()) {
 window.SupabaseClient = {
   initSupabase,
   simpanHasilPetangan,
+  uploadCardImageToStorage,
   subscribeRealtimePetangan,
   getRiwayatPetangan,
   getConnectionStatus,
