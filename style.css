@@ -43,7 +43,7 @@
   /* Typography */
   --font-display: 'Cinzel Decorative', 'Palatino Linotype', serif;
   --font-serif: 'Playfair Display', 'Georgia', serif;
-  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-body: 'Helvetica', Arial, sans-serif;
   --font-javanese: 'Noto Serif Javanese', serif;
 
   /* Spacing */
@@ -341,7 +341,7 @@ body {
 }
 
 .nav-badge {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 0.4rem;
   padding: 0.3em 0.8em;
