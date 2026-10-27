@@ -16,9 +16,9 @@
   --clr-indigo: #1a1545;
   --clr-indigo-mid: #221c5e;
 
-  --clr-gold: #d4a017;
-  --clr-gold-light: #e8b84b;
-  --clr-gold-bright: #f5cc6a;
+  --clr-gold: #c54020;
+  --clr-gold-light: #c54020;
+  --clr-gold-bright: #c54020;
   --clr-amber: #c47a15;
   --clr-amber-glow: rgba(212, 160, 23, 0.25);
   --clr-gold-glow: rgba(232, 184, 75, 0.15);
@@ -266,12 +266,12 @@ body {
 .hero-bg-img {
   position: absolute;
   inset: 0;
-  background-image: url('assets/hero-bg.jpg');
+  background-image: url('assets/homepage.jpg');
   background-size: cover;
   background-position: center 30%;
   z-index: 0;
-  transform: scale(1.05);
-  animation: heroZoom 30s ease-in-out infinite alternate;
+  /*transform: scale(1.05);
+  animation: heroZoom 30s ease-in-out infinite alternate;*/
 }
 
 @keyframes heroZoom {
@@ -285,13 +285,13 @@ body {
 }
 
 .hero-overlay {
+  display: block; /* Pastikan tidak 'none' agar gradasinya muncul */
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom,
-      rgba(4, 3, 10, 0.5) 0%,
-      rgba(8, 6, 20, 0.65) 40%,
-      rgba(4, 3, 10, 0.92) 100%);
+  /* Transparan dari atas sampai 70%, lalu perlahan memudar menjadi warna var(--clr-deep) di 100% */
+  background: linear-gradient(to bottom, transparent 80%, var(--clr-deep) 100%);
   z-index: 1;
+  pointer-events: none; /* Agar tidak menghalangi klik jika ada elemen di bawahnya */
 }
 
 /* ---------- Navbar ---------- */
@@ -307,7 +307,7 @@ body {
 }
 
 .nav-brand {
-  display: flex;
+  display: none;
   align-items: center;
   gap: var(--space-sm);
 }
@@ -549,6 +549,14 @@ body {
   padding-bottom: var(--space-xl);
 }
 
+.hero-bottom-logo {
+  width: 95px; /* Mengecilkan ukuran logo (sebelumnya 120px) */
+  height: auto;
+  object-fit: contain;
+  opacity: 0.8;
+  margin-bottom: 40px; /* Menambah jarak ke bawah agar tidak mepet dengan judul */
+}
+
 .scroll-line {
   width: 1px;
   height: 60px;
@@ -639,11 +647,11 @@ body {
 }
 
 .form-label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  font-weight: bold;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--clr-gold);
+  text-transform: none;
+  color: #ffffff;
 }
 
 .input-wrapper {
@@ -708,8 +716,9 @@ body {
   position: relative;
   width: 100%;
   padding: 1em 2em;
-  background: linear-gradient(135deg, #1a1545, #2d1d6e);
-  border: 1.5px solid var(--clr-gold);
+  /* Warna dasar: gradasi merah terang ke merah gelap */
+  background: linear-gradient(135deg, #d32f2f, #8e0000); 
+  border: none; 
   border-radius: var(--radius-md);
   cursor: pointer;
   overflow: hidden;
@@ -718,11 +727,15 @@ body {
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(212, 160, 23, 0.35);
+  /* Warna saat kursor di atas tombol: sedikit lebih menyala */
+  background: linear-gradient(135deg, #e53935, #b71c1c); 
+  box-shadow: 0 6px 24px rgba(211, 47, 47, 0.4); /* Efek bayangan merah */
 }
 
 .submit-btn:active {
   transform: translateY(0);
+  /* Warna saat tombol diklik: merah sangat gelap */
+  background: linear-gradient(135deg, #8e0000, #5c0000); 
 }
 
 .submit-btn:disabled {
@@ -744,8 +757,8 @@ body {
   font-family: var(--font-serif);
   font-size: 1.05rem;
   font-weight: 600;
-  font-style: italic;
-  color: var(--clr-gold-bright);
+  font-style: normal;
+  color: #ffffff;
   letter-spacing: 0.03em;
 }
 
@@ -753,18 +766,6 @@ body {
   font-family: var(--font-javanese);
   font-size: 1.4rem;
   color: var(--clr-gold);
-}
-
-.btn-glow {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(212, 160, 23, 0.15), rgba(212, 160, 23, 0.05));
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.submit-btn:hover .btn-glow {
-  opacity: 1;
 }
 
 /* =====================================================
@@ -872,7 +873,7 @@ body {
 .tarot-custom-card {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   margin: 0 auto;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -897,14 +898,15 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 10; /* KUNCI 1: Pastikan di atas gambar */
 }
 
 /* 
  * Koordinat Nama:
- * x: 97, y: 662, w: 631, h: 60 (pada basis 825 x 1425)
- * left: (97/825) = 11.76%, top: (662/1425) = 46.46%
- * width: (631/825) = 76.48%, height: (60/1425) = 4.21%
- * font: Cinzel Decorative, size: 50px (pada 825px) -> ~6.06cqi, weight: 900 (BLACK)
+ * x: 194,4 px, y: 344,8936 px, w: 217,5319 px, h: 21,9574 px (pada basis 825 x 1425)
+ * left: (194.4/825) = 23.56%, top: (344.8936/1425) = 24.13%
+ * width: (217.5319/825) = 26.37%, height: (21.9574/1425) = 1.54%
+ * font: Helvetica, Arial, sans-serif;, size: 50px (pada 825px) -> ~6.06cqi, weight: 900 (BLACK)
  */
 .tarot-custom-name {
   position: absolute;
@@ -912,20 +914,20 @@ body {
   top: 48.0%;
   /* Sedikit diturunkan agar pas di tengah frame pita nama */
   width: 76.485%;
-  height: 4.8%;
+  height: 4.8%; /* Jika nanti teks terpotong atas/bawahnya, ganti ini jadi min-height: 4%; */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-family: Helvetica, Arial, sans-serif !important;
   font-size: clamp(1.2rem, 3.5vw, 1.95rem);
   font-weight: 900;
-  /* BLACK */
   letter-spacing: 0.08em;
   color: #1a1612;
-  /* Warna hitam pekat elegan */
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
   line-height: 1;
+  white-space: nowrap; /* KUNCI 2: Cegah teks patah jadi 2 baris */
+  z-index: 11; /* KUNCI 3: Tampil paling depan */
 }
 
 /* 
@@ -945,7 +947,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: clamp(0.72rem, 2.1vw, 1.15rem);
   font-weight: 700;
   /* BOLD */
@@ -1174,6 +1176,13 @@ body {
   color: var(--clr-text-faint);
 }
 
+.footer-logo-img {
+  height: 80px; /* Sesuaikan angka ini untuk membesarkan atau mengecilkan logo */
+  width: auto;
+  object-fit: contain;
+  margin-bottom: var(--space-md); /* Memberikan jarak bawah agar tidak menempel dengan teks copyright */
+}
+
 /* =====================================================
    LOADING OVERLAY
    ===================================================== */
@@ -1254,7 +1263,7 @@ body {
    ===================================================== */
 @media (max-width: 768px) {
   .calculator-card {
-    padding: var(--space-xl);
+    padding: 1.5rem; /* Lebih kecil dari padding desktop */
   }
 
   .toggle-options {
@@ -1262,7 +1271,7 @@ body {
   }
 
   .result-card {
-    padding: var(--space-xl);
+    padding: 1.5rem; /* Lebih kecil dari padding desktop */
   }
 
   .hero-content {
@@ -1302,4 +1311,20 @@ body {
 /* Ensure Javanese font renders properly */
 .noto-jv {
   font-family: 'Noto Serif Javanese', serif;
+}
+
+/* Animasi Fade-In saat Web Pertama Kali Dimuat */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* Opsional: memberikan efek geser halus ke atas */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  animation: pageFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

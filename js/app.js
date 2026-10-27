@@ -2,7 +2,7 @@
  * app.js
  * ============================================================
  * Sasmita Aksara — Main Application Controller
- * Menghubungkan semua modul: UI, Hanacaraka, Petangan, Supabase
+ * Menghubungkan semua modul: UI, Petangan (Randomizer), Supabase
  * ============================================================
  */
 
@@ -12,32 +12,33 @@
 // 1. DOM REFERENCES
 // ============================================================
 const DOM = {
-  // Form
-  form:           document.getElementById('petanganForm'),
-  namaInput:      document.getElementById('namaInput'),
-  panggilanInput: document.getElementById('panggilanInput'),
-  namaError:      document.getElementById('namaInputError'),
-  submitBtn:       document.getElementById('submitBtn'),
-  resetBtn:        document.getElementById('resetBtn'),
-  downloadCardBtn: document.getElementById('downloadCardBtn'),
+  // Form & Layout
+  form:             document.getElementById('petanganForm'),
+  formInputSection: document.getElementById('formInputSection'),
+  homepageTitle:    document.getElementById('homepageTitleSection'), // Untuk menyembunyikan title
+  namaInput:        document.getElementById('namaInput'),
+  namaError:        document.getElementById('namaInputError'),
+  submitBtn:        document.getElementById('submitBtn'),
+  resetBtn:         document.getElementById('resetBtn'),
+  downloadCardBtn:  document.getElementById('downloadCardBtn'),
 
   // Status badge
-  statusDot:   document.getElementById('supabaseStatusDot'),
-  statusText:  document.getElementById('supabaseStatusText'),
+  statusDot:        document.getElementById('supabaseStatusDot'),
+  statusText:       document.getElementById('supabaseStatusText'),
 
   // Results — Format Custom Graphic Card
-  resultContainer: document.getElementById('resultContainer'),
-  tarotCustomCard: document.getElementById('tarotCustomCard'),
-  tarotCustomBg:   document.getElementById('tarotCustomBg'),
-  tarotCustomName: document.getElementById('tarotCustomName'),
-  tarotCustomDesc: document.getElementById('tarotCustomDesc'),
-  supabaseMessage:    document.getElementById('supabaseMessage'),
-  supabaseIndicator:  document.getElementById('supabaseIndicator'),
+  resultContainer:  document.getElementById('resultContainer'),
+  tarotCustomCard:  document.getElementById('tarotCustomCard'),
+  tarotCustomBg:    document.getElementById('tarotCustomBg'),
+  tarotCustomName:  document.getElementById('tarotCustomName'),
+  // tarotCustomDesc sudah dihapus dari HTML sesuai instruksi
+  
+  supabaseMessage:  document.getElementById('supabaseMessage'),
+  supabaseIndicator:document.getElementById('supabaseIndicator'),
 
   // Loading
-  loadingOverlay:  document.getElementById('loadingOverlay'),
-  loadingProgress: document.getElementById('loadingProgress'),
-
+  loadingOverlay:   document.getElementById('loadingOverlay'),
+  loadingProgress:  document.getElementById('loadingProgress'),
 };
 
 // ============================================================
@@ -62,7 +63,6 @@ async function init() {
   DOM.form.addEventListener('submit', handleFormSubmit);
   DOM.resetBtn.addEventListener('click', handleReset);
   DOM.downloadCardBtn?.addEventListener('click', handleDownloadCard);
-
 
   // Live validation saat mengetik
   DOM.namaInput.addEventListener('input', () => {
@@ -97,12 +97,10 @@ async function handleFormSubmit(e) {
 
   if (STATE.isProcessing) return;
 
-  const namaLengkap = DOM.namaInput.value.trim();
-  const inputPanggilan = DOM.panggilanInput?.value.trim();
-  // Jika nama panggilan kosong, fallback ke kata pertama nama lengkap
-  const namaPanggilan = inputPanggilan || namaLengkap.split(' ')[0] || namaLengkap;
+  // Ambil nama lengkap dan jadikan huruf kapital sesuai desain kartu
+  const namaLengkap = DOM.namaInput.value.trim().toUpperCase();
 
-  // Validasi Nama Lengkap (yang dihitung adalah Nama Lengkap)
+  // Validasi Nama Lengkap (maks 20 karakter)
   const validasi = window.PetanganEngine.validasiNama(namaLengkap);
   if (!validasi.valid) {
     showError(validasi.error);
@@ -121,54 +119,42 @@ async function handleFormSubmit(e) {
   try {
     // Simulasi loading progress
     await animateProgress([
-      { pct: 20, msg: 'Menganalisis fonem...', delay: 300 },
-      { pct: 50, msg: 'Transliterasi Hanacaraka...', delay: 400 },
-      { pct: 75, msg: 'Menghitung neptu...', delay: 300 },
-      { pct: 90, msg: 'Kalkulasi Petangan Jawa...', delay: 300 },
+      { pct: 30, msg: 'Menyelaraskan energi...', delay: 300 },
+      { pct: 70, msg: 'Membaca takdir...', delay: 400 },
     ]);
 
-    // === PROSES TRANSLITERASI (Menggunakan Nama Lengkap) ===
-    const translitResult = window.HanacarakaEngine.transliterasiHanacaraka(namaLengkap);
-
-    // === PROSES KALKULASI (Metode Pancawara 5) ===
-    const petanganResult = window.PetanganEngine.hitungPetangan(translitResult.totalNeptu);
-
+    // === PROSES PEMILIHAN KARTU ACAK ===
+    const hasilKartu = window.PetanganEngine.getRandomCard();
     await setProgress(100, 'Selesai!');
 
-    // === RENDER HASIL (Tampilkan Nama Panggilan di Display Tarot) ===
-    await renderResults(translitResult, petanganResult, namaLengkap, namaPanggilan);
+    // === RENDER HASIL ===
+    await renderResults(hasilKartu, namaLengkap);
+
+    // Sembunyikan kolom input, tombol submit, dan judul homepage setelah disubmit
+    if (DOM.formInputSection) DOM.formInputSection.style.display = 'none';
+    if (DOM.homepageTitle) DOM.homepageTitle.style.display = 'none';
 
     // === SIMPAN KE SUPABASE (Database & Card Image Storage) ===
     updateSupabaseUI('loading');
 
-    STATE.lastResult = { translitResult, petanganResult, namaLengkap, namaPanggilan };
+    STATE.lastResult = { hasilKartu, namaLengkap };
 
-    // Simpan data kalkulasi ke database (termasuk idKartu, deskripsi & pituah untuk Unity)
+    // Simpan data kalkulasi ke database
     const supaResult = await window.SupabaseClient.simpanHasilPetangan({
-      idKartu:       petanganResult.hasil.idKartu, // 1: Sang Sri, 2: Sang Lungguh, 3: Sang Gedhong, 4: Sang Lara, 5: Sang Pati
+      idKartu:       hasilKartu.idKartu,
       namaLatin:     namaLengkap,
-      namaPanggilan: namaPanggilan,
-      aksaraJawa:    translitResult.aksaraString,
-      totalNeptu:    translitResult.totalNeptu,
-      sisaBagi:      petanganResult.sisa,
-      hasilKey:      petanganResult.hasil.key,
-      hasilNama:     petanganResult.hasil.nama,
-      hasilArti:     petanganResult.hasil.singkat,
-      deskripsi:     petanganResult.hasil.deskripsi,
-      pituah:        petanganResult.hasil.pituah,
-      metode:        'soemodidjojo',
-      sessionId:     STATE.sessionId,
+      namaPanggilan: namaLengkap, // Disamakan karena sudah tidak ada input nama panggilan
     });
 
     // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)
     try {
       const cardCanvas = await generateCardCanvas();
       const cardDataUrl = cardCanvas.toDataURL('image/png');
-      const fileName = `${namaPanggilan.replace(/\s+/g, '_')}_card${petanganResult.hasil.idKartu}.png`;
+      const fileName = `${namaLengkap.replace(/\s+/g, '_')}_card${hasilKartu.idKartu}.png`;
       await window.SupabaseClient.uploadCardImageToStorage(
         cardDataUrl,
         fileName,
-        petanganResult.hasil.idKartu,
+        hasilKartu.idKartu,
         supaResult?.id
       );
     } catch (cardErr) {
@@ -193,34 +179,12 @@ async function handleFormSubmit(e) {
 // ============================================================
 // 5. RENDER HASIL
 // ============================================================
-async function renderResults(translit, petangan, namaLengkap, namaPanggilan) {
-  // ── STEP 01 & 02 → Console only ──────────────────────────────
-  console.groupCollapsed(
-    `%c[Sasmita Aksara] ${namaLengkap} (${namaPanggilan}) — Detail Kalkulasi`,
-    'color: #d4a017; font-weight: bold; font-size: 13px;'
-  );
-  console.log('%c[Step 01] Transliterasi Hanacaraka', 'color: #e8b84b; font-weight:bold;');
-  console.log('  Aksara Jawa    :', translit.aksaraString);
-  console.log('  Nama Lengkap   :', namaLengkap);
-  console.log('  Nama Panggilan :', namaPanggilan);
-  console.table(
-    translit.tokens
-      .filter(t => t.aksaraData && t.neptu > 0)
-      .map(t => ({ Suku: t.latin, Aksara: t.unicode, Neptu: t.neptu }))
-  );
-  console.log('%c[Step 02] Kalkulasi Neptu', 'color: #e8b84b; font-weight:bold;');
-  console.log('  Total Neptu :', translit.totalNeptu);
-  console.log('  Formula     :', petangan.formula);
-  console.log('%c[Step 03] Hasil Sasmita', 'color: #e8b84b; font-weight:bold;');
-  console.log('  Kategori    :', petangan.hasil.nama);
-  console.log('  Makna       :', petangan.hasil.singkat);
-  console.groupEnd();
-
-  // ── STEP 03 → Tampilkan di UI ────────────────────────────────
+async function renderResults(hasilKartu, namaLengkap) {
+  // ── Tampilkan di UI ────────────────────────────────
   DOM.resultContainer.hidden = false;
   DOM.resultContainer.removeAttribute('hidden');
 
-  renderFinalResult(petangan, namaPanggilan);
+  renderFinalResult(hasilKartu, namaLengkap);
 
   // Scroll ke hasil dengan smooth
   setTimeout(() => {
@@ -228,21 +192,32 @@ async function renderResults(translit, petangan, namaLengkap, namaPanggilan) {
   }, 200);
 }
 
-
-
 /**
- * Render hasil akhir Petangan ke Custom Graphic Card
+ * Render hasil akhir ke Custom Graphic Card dengan Font Dinamis
  */
-function renderFinalResult(petangan, namaPanggilan) {
-  const { hasil } = petangan;
-
+function renderFinalResult(hasilKartu, namaLengkap) {
   if (DOM.tarotCustomCard) {
     DOM.tarotCustomCard.style.display = 'block';
 
-    const bgImageSrc = hasil.bgCard || 'assets/SangSriBG.png';
-    if (DOM.tarotCustomBg) DOM.tarotCustomBg.src = bgImageSrc;
-    if (DOM.tarotCustomName) DOM.tarotCustomName.textContent = namaPanggilan;
-    if (DOM.tarotCustomDesc) DOM.tarotCustomDesc.textContent = hasil.deskripsi;
+    // Set gambar latar kartu
+    if (DOM.tarotCustomBg) {
+      DOM.tarotCustomBg.src = hasilKartu.bgCard;
+    }
+    
+    // Set dan resize nama otomatis
+    if (DOM.tarotCustomName) {
+      DOM.tarotCustomName.textContent = namaLengkap;
+      
+      // Auto-resize Font Size agar fit di dalam div pita
+      let fontSize = 1.95; // Base rem (ukuran awal maksimal)
+      DOM.tarotCustomName.style.fontSize = fontSize + 'rem';
+      
+      // Jika teks kepanjangan dari lebar div-nya, kecilkan perlahan
+      while (DOM.tarotCustomName.scrollWidth > DOM.tarotCustomName.clientWidth && fontSize > 0.8) {
+        fontSize -= 0.05;
+        DOM.tarotCustomName.style.fontSize = fontSize + 'rem';
+      }
+    }
 
     // Animate Card Reveal
     DOM.tarotCustomCard.style.animation = 'none';
@@ -252,7 +227,8 @@ function renderFinalResult(petangan, namaPanggilan) {
 }
 
 /**
- * Render kartu ke elemen HTML5 Canvas resolusi tinggi (825x1425)
+ * Render kartu ke elemen HTML5 Canvas untuk fitur unduh
+ * Hanya menggambar BG Kartu dan Teks Nama yang auto-scale
  * @returns {Promise<HTMLCanvasElement>}
  */
 function generateCardCanvas() {
@@ -266,66 +242,44 @@ function generateCardCanvas() {
       await document.fonts.ready;
     }
 
-    const { petanganResult, namaPanggilan } = STATE.lastResult;
-    const bgSrc = petanganResult.hasil.bgCard || 'assets/SangSriBG.png';
+    const { hasilKartu, namaLengkap } = STATE.lastResult;
     const canvas = document.createElement('canvas');
-    canvas.width = 825;
-    canvas.height = 1425;
+    
+    // Resolusi default gambar kartu (sesuaikan jika resolusi asli gambar berbeda)
+    canvas.width = 1080; 
+    canvas.height = 1920; 
     const ctx = canvas.getContext('2d');
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      // 1. Gambar latar belakang kartu
-      ctx.drawImage(img, 0, 0, 825, 1425);
+      // 1. Gambar latar belakang kartu utuh
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // 2. Render Nama Panggilan
-      // Pada layar: top 48.0% (1425 * 0.48 = 684) + height 4.8% (68.4px) -> center Y = 718.2
-      // Center X: 825 / 2 = 412.5
-      ctx.font = '900 44px "Cinzel Decorative", serif';
+      // 2. Render Nama Dinamis
+      let fontSize = 65; // Ukuran font dasar di resolusi besar
+      const maxWidth = 780; // Lebar maksimal pita nama di canvas agar tidak menabrak pinggir
+      
+      ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
       ctx.fillStyle = '#1a1612';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(namaPanggilan, 412.5, 718);
 
-      // 3. Render Deskripsi Teks
-      // Pada layar: top 56.842% (1425 * 0.56842 = 810px), font 28px agar pas di dalam frame dengan line-height 42px
-      ctx.font = '700 28px "Cinzel Decorative", serif';
-      ctx.fillStyle = '#1a1612';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
+      // Auto-scale font untuk Canvas jika teks terlalu panjang
+      while (ctx.measureText(namaLengkap).width > maxWidth && fontSize > 30) {
+        fontSize -= 2;
+        ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
+      }
 
-      const deskripsi = petanganResult.hasil.deskripsi;
-      wrapText(ctx, deskripsi, 412.5, 845, 620, 42); // Jarak antar baris 42px
+      // Koordinat penempatan teks nama di atas pita (sesuaikan Y jika kurang ke atas/bawah)
+      // 945 adalah estimasi Y center untuk resolusi 1920
+      ctx.fillText(namaLengkap, canvas.width / 2, 945); 
 
       resolve(canvas);
     };
     img.onerror = (e) => reject(new Error('Gagal memuat gambar kartu untuk export.'));
-    img.src = bgSrc;
+    img.src = hasilKartu.bgCard;
   });
-}
-
-/**
- * Helper untuk word-wrap text di Canvas
- */
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ');
-  let line = '';
-  let curY = y;
-
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    const metrics = ctx.measureText(testLine);
-    const testWidth = metrics.width;
-    if (testWidth > maxWidth && n > 0) {
-      ctx.fillText(line.trim(), x, curY);
-      line = words[n] + ' ';
-      curY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line.trim(), x, curY);
 }
 
 /**
@@ -340,9 +294,9 @@ async function handleDownloadCard() {
     DOM.downloadCardBtn.innerHTML = '<span>Membuat Gambar...</span>';
 
     const canvas = await generateCardCanvas();
-    const dataUrl = canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9); // Kualitas JPEG 90%
 
-    const namaFile = `Kartu-Sasmita-${STATE.lastResult.namaPanggilan.replace(/\s+/g, '_')}.png`;
+    const namaFile = `Kartu-Petangan-Wilangan-${STATE.lastResult.namaLengkap.replace(/\s+/g, '_')}.jpeg`;
     const a = document.createElement('a');
     a.href = dataUrl;
     a.download = namaFile;
@@ -435,13 +389,15 @@ function handleReset() {
     clearError();
     STATE.lastResult = null;
 
+    // Munculkan kembali form input dan judul homepage
+    if (DOM.formInputSection) DOM.formInputSection.style.display = '';
+    if (DOM.homepageTitle) DOM.homepageTitle.style.display = '';
+
     // Scroll input ke tampilan dan langsung fokus
     DOM.namaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(() => DOM.namaInput.focus(), 400);
   }, 300);
 }
-
-
 
 // ============================================================
 // 10. LOADING OVERLAY
