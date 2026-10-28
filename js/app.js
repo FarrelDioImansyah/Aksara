@@ -8,24 +8,6 @@
 
 'use strict';
 
-// 1. Array untuk menyimpan daftar larangan
-let daftarKataKasar = [];
-
-// 2. Fungsi memuat isi file kata-kasar.txt
-async function loadBadWords() {
-  try {
-    const response = await fetch('kata-kasar.txt');
-    const text = await response.text();
-    // Pecah berdasarkan baris baru, hilangkan spasi, jadikan huruf kecil, dan hapus baris kosong
-    daftarKataKasar = text.split('\n').map(word => word.trim().toLowerCase()).filter(Boolean);
-  } catch (error) {
-    console.error('Gagal memuat filter kata:', error);
-  }
-}
-
-// 3. Langsung eksekusi saat file JS dibaca browser
-loadBadWords();
-
 // ============================================================
 // 1. DOM REFERENCES
 // ============================================================
@@ -118,6 +100,17 @@ async function handleFormSubmit(e) {
   // Ambil nama lengkap dan jadikan huruf kapital sesuai desain kartu
   const namaLengkap = DOM.namaInput.value.trim().toUpperCase();
 
+  // 1. Validasi Kata Kotor (Aman & Statis)
+  const lowerNama = namaLengkap.toLowerCase();
+  const isBadWord = window.BAD_WORDS_LIST.some(word => lowerNama.includes(word));
+
+  if (isBadWord) {
+    showError('Kata tidak bisa digunakan.');
+    DOM.namaInput.focus();
+    shakeElement(DOM.namaInput);
+    return; // Hentikan proses, tidak akan reload
+  }
+
   // Validasi Nama Lengkap (maks 20 karakter)
   const validasi = window.PetanganEngine.validasiNama(namaLengkap);
   if (!validasi.valid) {
@@ -157,11 +150,16 @@ async function handleFormSubmit(e) {
 
     STATE.lastResult = { hasilKartu, namaLengkap };
 
+    // 1. TAMBAHAN: Dapatkan transliterasi aksara Jawa
+    const transliterasi = window.HanacarakaEngine.transliterasiHanacaraka(namaLengkap);
+    const aksaraJawa = transliterasi.aksaraString;
+
     // Simpan data kalkulasi ke database
     const supaResult = await window.SupabaseClient.simpanHasilPetangan({
       idKartu:       hasilKartu.idKartu,
       namaLatin:     namaLengkap,
       namaPanggilan: namaLengkap, // Disamakan karena sudah tidak ada input nama panggilan
+      hanaCaraka:    hanaCaraka, // TAMBAHAN INI
     });
 
     // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)
@@ -228,14 +226,14 @@ function renderFinalResult(hasilKartu, namaLengkap) {
       DOM.tarotCustomName.textContent = namaLengkap;
       
       // Auto-resize Font Size agar fit di dalam div pita
-      let fontSize = 1.95; // Base rem (ukuran awal maksimal)
+      /*let fontSize = 1.95; // Base rem (ukuran awal maksimal)
       DOM.tarotCustomName.style.fontSize = fontSize + 'rem';
       
       // Jika teks kepanjangan dari lebar div-nya, kecilkan perlahan
       while (DOM.tarotCustomName.scrollWidth > DOM.tarotCustomName.clientWidth && fontSize > 0.8) {
         fontSize -= 0.05;
         DOM.tarotCustomName.style.fontSize = fontSize + 'rem';
-      }
+      }*/
     }
 
     // Animate Card Reveal

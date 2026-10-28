@@ -981,7 +981,7 @@ body {
   margin: 0 auto;
   
   /* Titik Y presisi berdasarkan Y = 927 di resolusi 1920 */
-  top: 47.3%; 
+  top: 47.2%; 
   width: 55%; /* Berdasarkan lebar 592px / 1080px */
   height: 5%;
 
@@ -990,10 +990,12 @@ body {
   justify-content: center;
   text-align: center;
   font-family: Helvetica, Arial, sans-serif !important;
-  font-size: 4.2cqw; /* Ukuran font mengunci proporsional terhadap lebar kartu */
+  font-size: 4.2cqw !important; /* Ukuran font mengunci proporsional terhadap lebar kartu */
   font-weight: 900;
   letter-spacing: 0.08em;
-  color: #1a1612;
+  color: #1a1612 !important;
+  -webkit-text-fill-color: #000000 !important;
+  color-scheme: light !important;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
   line-height: 1;
   white-space: nowrap; /* KUNCI 2: Cegah teks patah jadi 2 baris */
