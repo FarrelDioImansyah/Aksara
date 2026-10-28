@@ -266,7 +266,7 @@ body {
 .hero-bg-img {
   position: absolute;
   inset: 0;
-  background-image: url('assets/homepage.jpg');
+  background-image: url('assets/homepage_2.jpg');
   background-size: cover;
   background-position: center 30%;
   z-index: 0;
@@ -433,6 +433,69 @@ body {
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
+}
+
+/* =====================================================
+   HERO MAIN DISPLAY (DORONG KE ATAS)
+   ===================================================== */
+.hero-main-display {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  /* KUNCI 1: Ubah center menjadi flex-start agar konten mulai dari atas */
+  justify-content: flex-start; 
+  flex: 1;
+  width: 100%;
+  gap: var(--space-xs); 
+  
+  /* KUNCI 2: Beri jarak dari atap layar (gunakan vh agar adaptif di semua layar) */
+  padding: 10vh var(--container-pad) 0; 
+}
+
+/* Pengaturan Ukuran Logo & Judul SVG (Tetap Sama) */
+.hero-main-display .hero-scroll-indicator {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.hero-main-display .hero-bottom-logo {
+  width: 70px; 
+  height: auto;
+  margin-bottom: 0;
+}
+
+.hero-title-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-title-svg {
+  width: 100%;
+  max-width: 380px; 
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 20px rgba(212, 160, 23, 0.3));
+}
+
+/* Optimalisasi Layar HP */
+@media (max-width: 768px) {
+  .hero-main-display {
+    /* Jarak dari atas sedikit dinaikkan saat dibuka di HP agar pas */
+    padding-top: 8vh; 
+  }
+
+  .hero-bottom-logo {
+    width: 60px;
+  }
+
+  .hero-title-svg {
+    max-width: 60vw; 
+  }
 }
 
 .title-top,
@@ -647,6 +710,7 @@ body {
 }
 
 .form-label {
+  font-family: "Helvetica", "Arial", sans-serif !important;
   font-size: 1.3rem;
   font-weight: bold;
   letter-spacing: 0.1em;

@@ -8,6 +8,24 @@
 
 'use strict';
 
+// 1. Array untuk menyimpan daftar larangan
+let daftarKataKasar = [];
+
+// 2. Fungsi memuat isi file kata-kasar.txt
+async function loadBadWords() {
+  try {
+    const response = await fetch('kata-kasar.txt');
+    const text = await response.text();
+    // Pecah berdasarkan baris baru, hilangkan spasi, jadikan huruf kecil, dan hapus baris kosong
+    daftarKataKasar = text.split('\n').map(word => word.trim().toLowerCase()).filter(Boolean);
+  } catch (error) {
+    console.error('Gagal memuat filter kata:', error);
+  }
+}
+
+// 3. Langsung eksekusi saat file JS dibaca browser
+loadBadWords();
+
 // ============================================================
 // 1. DOM REFERENCES
 // ============================================================
