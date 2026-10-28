@@ -159,7 +159,7 @@ async function handleFormSubmit(e) {
       idKartu:       hasilKartu.idKartu,
       namaLatin:     namaLengkap,
       namaPanggilan: namaLengkap, // Disamakan karena sudah tidak ada input nama panggilan
-      hanaCaraka:    hanaCaraka, // TAMBAHAN INI
+      Hanacaraka:    aksaraJawa, // TAMBAHAN INI
     });
 
     // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)

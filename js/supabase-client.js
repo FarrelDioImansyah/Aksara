@@ -185,6 +185,7 @@ async function simpanHasilPetangan(data) {
     idKartu,
     namaLatin,
     namaPanggilan,
+    Hanacaraka,
   } = data;
 
   // Mode Demo: simulasi tanpa DB nyata
@@ -207,7 +208,7 @@ async function simpanHasilPetangan(data) {
     const userPayload = {
       nama_latin:     (namaLatin || '').trim(),
       nama_panggilan: (namaPanggilan || '').trim(),
-      Hanacaraka:    data.Hanacaraka || '', // TAMBAHAN INI
+      Hanacaraka:    Hanacaraka || '', // TAMBAHAN INI
       id_kartu:       idKartu, // Relasi ke cards(id) (1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati)
     };
 
