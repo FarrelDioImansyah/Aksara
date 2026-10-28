@@ -64,11 +64,9 @@ async function init() {
   DOM.resetBtn.addEventListener('click', handleReset);
   DOM.downloadCardBtn?.addEventListener('click', handleDownloadCard);
 
-  // Live validation saat mengetik
-  DOM.namaInput.addEventListener('input', () => {
-    if (DOM.namaError.textContent) clearError();
-    animateInputGlow();
-  });
+  // Live validation saat mengetik (otomatis hapus badword real-time tanpa nunggu submit)
+  DOM.namaInput.addEventListener('input', handleNamaInputLive);
+  DOM.namaInput.addEventListener('blur', handleNamaInputBlur);
 
   // Enter key hint
   DOM.namaInput.addEventListener('keydown', (e) => {
@@ -90,6 +88,67 @@ async function init() {
 }
 
 // ============================================================
+// 3.5 REAL-TIME BADWORD HANDLERS
+// ============================================================
+let badwordDebounceTimer = null;
+let badwordErrorTimer = null;
+
+function handleNamaInputLive() {
+  animateInputGlow();
+
+  const originalVal = DOM.namaInput.value;
+  if (!originalVal) {
+    if (DOM.namaError.textContent) clearError();
+    return;
+  }
+
+  // Jika ada pesan kesalahan sebelumnya dan pengguna mengetik lagi, bersihkan pesan
+  if (DOM.namaError.textContent) {
+    clearError();
+  }
+
+  // 1. Deteksi instan: kata kasar jelas & singkatan murni (langsung dihapus seketika tanpa nunggu submit)
+  if (window.BadWordsFilter) {
+    const instantCheck = window.BadWordsFilter.sanitize(originalVal, { isCommitted: false });
+    if (instantCheck.hasBadWord) {
+      applyBadwordRemoval(instantCheck.cleanText);
+      return;
+    }
+  }
+
+  // 2. Debounced check (600ms): kata ambigu saat jeda mengetik atau kata selesai
+  clearTimeout(badwordDebounceTimer);
+  badwordDebounceTimer = setTimeout(() => {
+    if (!window.BadWordsFilter) return;
+    const idleCheck = window.BadWordsFilter.sanitize(DOM.namaInput.value, { isCommitted: true });
+    if (idleCheck.hasBadWord) {
+      applyBadwordRemoval(idleCheck.cleanText);
+    }
+  }, 600);
+}
+
+function handleNamaInputBlur() {
+  if (!window.BadWordsFilter) return;
+  const blurCheck = window.BadWordsFilter.sanitize(DOM.namaInput.value, { isCommitted: true });
+  if (blurCheck.hasBadWord) {
+    applyBadwordRemoval(blurCheck.cleanText);
+  }
+}
+
+function applyBadwordRemoval(cleanText) {
+  DOM.namaInput.value = cleanText;
+  showError('Kata tidak pantas terdeteksi dan telah dihapus.');
+  shakeElement(DOM.namaInput);
+
+  clearTimeout(badwordErrorTimer);
+  badwordErrorTimer = setTimeout(() => {
+    if (DOM.namaError.textContent === 'Kata tidak pantas terdeteksi dan telah dihapus.') {
+      clearError();
+    }
+  }, 3500);
+}
+
+// ============================================================
 // 4. FORM SUBMIT HANDLER
 // ============================================================
 async function handleFormSubmit(e) {
@@ -100,15 +159,24 @@ async function handleFormSubmit(e) {
   // Ambil nama lengkap dan jadikan huruf kapital sesuai desain kartu
   const namaLengkap = DOM.namaInput.value.trim().toUpperCase();
 
-  // 1. Validasi Kata Kotor (Aman & Statis)
-  const lowerNama = namaLengkap.toLowerCase();
-  const isBadWord = window.BAD_WORDS_LIST.some(word => lowerNama.includes(word));
-
-  if (isBadWord) {
-    showError('Kata tidak bisa digunakan.');
-    DOM.namaInput.focus();
-    shakeElement(DOM.namaInput);
-    return; // Hentikan proses, tidak akan reload
+  // 1. Validasi Kata Kotor (Aman & Cerdas)
+  if (window.BadWordsFilter) {
+    const checkSubmit = window.BadWordsFilter.sanitize(namaLengkap, { isCommitted: true });
+    if (checkSubmit.hasBadWord) {
+      applyBadwordRemoval(checkSubmit.cleanText);
+      showError('Kata tidak bisa digunakan.');
+      DOM.namaInput.focus();
+      return; // Hentikan proses, tidak akan reload
+    }
+  } else if (window.BAD_WORDS_LIST) {
+    const lowerNama = namaLengkap.toLowerCase();
+    const isBadWord = window.BAD_WORDS_LIST.some(word => lowerNama.includes(word));
+    if (isBadWord) {
+      showError('Kata tidak bisa digunakan.');
+      DOM.namaInput.focus();
+      shakeElement(DOM.namaInput);
+      return;
+    }
   }
 
   // Validasi Nama Lengkap (maks 20 karakter)

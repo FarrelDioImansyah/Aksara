@@ -746,6 +746,11 @@ body {
   background: rgba(4, 3, 10, 0.8);
 }
 
+.form-input[aria-invalid="true"] {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.4) !important;
+}
+
 .form-input:focus+.input-glow {
   opacity: 1;
 }
