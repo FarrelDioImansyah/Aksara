@@ -935,6 +935,7 @@ body {
 
 /* ---------- Custom Graphic Card (SangSriBG.png: 825 x 1425) ---------- */
 .tarot-custom-card {
+  container-type: inline-size;
   position: relative;
   width: 100%;
   max-width: 400px;
@@ -973,13 +974,14 @@ body {
  * font: Helvetica, Arial, sans-serif;, size: 50px (pada 825px) -> ~6.06cqi, weight: 900 (BLACK)
  */
 .tarot-custom-name {
+ 
   position: absolute;
   left: 0;
   right: 0;
   margin: 0 auto;
   
   /* Titik Y presisi berdasarkan Y = 927 di resolusi 1920 */
-  top: 47.4%; 
+  top: 47.3%; 
   width: 55%; /* Berdasarkan lebar 592px / 1080px */
   height: 5%;
 
@@ -988,7 +990,7 @@ body {
   justify-content: center;
   text-align: center;
   font-family: Helvetica, Arial, sans-serif !important;
-  font-size: clamp(1.2rem, 3.5vw, 1.95rem);
+  font-size: 4.2cqw; /* Ukuran font mengunci proporsional terhadap lebar kartu */
   font-weight: 900;
   letter-spacing: 0.08em;
   color: #1a1612;
@@ -996,6 +998,14 @@ body {
   line-height: 1;
   white-space: nowrap; /* KUNCI 2: Cegah teks patah jadi 2 baris */
   z-index: 11; /* KUNCI 3: Tampil paling depan */
+}
+
+/* 3. Penyesuaian khusus media query HP */
+@media (max-width: 768px) {
+  .tarot-custom-name {
+    top: 47.2%;
+    font-size: 4cqw; /* Menjaga teks tetap fit di dalam pita pada layar HP */
+  }
 }
 
 /* 
