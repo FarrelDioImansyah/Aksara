@@ -147,7 +147,7 @@ async function handleFormSubmit(e) {
     });
 
     // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)
-    try {
+    /*try {
       const cardCanvas = await generateCardCanvas();
       const cardDataUrl = cardCanvas.toDataURL('image/png');
       const fileName = `${namaLengkap.replace(/\s+/g, '_')}_card${hasilKartu.idKartu}.png`;
@@ -160,6 +160,7 @@ async function handleFormSubmit(e) {
     } catch (cardErr) {
       console.warn('[App] Upload gambar kartu ke CardPetangen diabaikan/mode demo:', cardErr.message);
     }
+    */
 
     updateSupabaseUI(
       supaResult.success ? (supaResult.demo ? 'demo' : 'success') : 'error',
@@ -257,23 +258,30 @@ function generateCardCanvas() {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // 2. Render Nama Dinamis
+      const centerX = 540; // Titik tengah X (1080 / 2)
+      
+      // Y = 915 mbah setengah tinggi kotak (60 / 2 = 30) agar teks jatuh persis di tengah
+      const centerY = 910; 
+      
+      const maxWidth = 580; // Batas lebar berdasarkan bounding box (593px) dikurangi sedikit margin aman
+
       let fontSize = 65; // Ukuran font dasar di resolusi besar
-      const maxWidth = 780; // Lebar maksimal pita nama di canvas agar tidak menabrak pinggir
       
       ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
       ctx.fillStyle = '#1a1612';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+      
+      // textBaseline 'middle' akan memposisikan titik tengah vertikal teks persis di centerY
+      ctx.textBaseline = 'middle'; 
 
       // Auto-scale font untuk Canvas jika teks terlalu panjang
-      while (ctx.measureText(namaLengkap).width > maxWidth && fontSize > 30) {
+      while (ctx.measureText(namaLengkap).width > maxWidth && fontSize > 25) {
         fontSize -= 2;
         ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
       }
 
-      // Koordinat penempatan teks nama di atas pita (sesuaikan Y jika kurang ke atas/bawah)
-      // 945 adalah estimasi Y center untuk resolusi 1920
-      ctx.fillText(namaLengkap, canvas.width / 2, 945); 
+      // Cetak teks pada koordinat presisi (540, 957)
+      ctx.fillText(namaLengkap, centerX, centerY); 
 
       resolve(canvas);
     };

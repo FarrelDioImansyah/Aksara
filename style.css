@@ -784,9 +784,9 @@ body {
 /* Inline variant — inside the calculator card */
 .result-inline {
   max-width: 100%;
-  margin-top: var(--space-2xl);
-  padding-top: var(--space-xl);
-  border-top: 1px solid var(--clr-border);
+  margin-top: var(--space-md);
+  padding-top: 0;
+  border-top: none
 }
 
 /* Result cards inside inline container are borderless (already inside card) */
@@ -910,11 +910,15 @@ body {
  */
 .tarot-custom-name {
   position: absolute;
-  left: 11.758%;
-  top: 48.0%;
-  /* Sedikit diturunkan agar pas di tengah frame pita nama */
-  width: 76.485%;
-  height: 4.8%; /* Jika nanti teks terpotong atas/bawahnya, ganti ini jadi min-height: 4%; */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  
+  /* Titik Y presisi berdasarkan Y = 927 di resolusi 1920 */
+  top: 47.4%; 
+  width: 55%; /* Berdasarkan lebar 592px / 1080px */
+  height: 5%;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -970,6 +974,55 @@ body {
   display: none;
   width: 0;
   height: 0;
+}
+
+/* =====================================================
+   EFEK SHINY / HOLOGRAM KARTU COLLECTIBLE
+   ===================================================== */
+.tarot-custom-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  /* Gradasi cahaya putih dan sedikit sentuhan emas */
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(212, 160, 23, 0.2) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg); /* Dimiringkan agar terlihat seperti pantulan cahaya */
+  z-index: 20; /* Pastikan cahayanya di atas gambar dan teks */
+  pointer-events: none; /* Agar tidak menghalangi klik jika ada elemen di bawahnya */
+  
+  /* Jalankan animasi berkilat setiap 4 detik sekali */
+  animation: shinySweep 4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  animation-delay: 0.8s; /* Tunggu animasi kartu muncul dari bawah selesai dulu */
+}
+
+/* Keyframes untuk pergerakan cahayanya dari kiri ke kanan */
+@keyframes shinySweep {
+  0% { 
+    left: -100%; 
+    opacity: 0; 
+  }
+  10% { 
+    opacity: 1; 
+  }
+  40% { 
+    left: 200%; 
+    opacity: 1; 
+  }
+  45% { 
+    opacity: 0; 
+  }
+  100% { 
+    left: 200%; 
+    opacity: 0; 
+  }
 }
 
 /* Action Buttons & Download Card Button */
@@ -1173,7 +1226,7 @@ body {
 
 .footer-copyright {
   font-size: 0.75rem;
-  color: var(--clr-text-faint);
+  color: #fff;
 }
 
 .footer-logo-img {

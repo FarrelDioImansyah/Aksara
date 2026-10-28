@@ -382,45 +382,22 @@ function tampilkanSchema() {
 -- Jalankan di Supabase > SQL Editor
 -- ============================================================
 
--- Hapus tabel lama jika ingin reset (OPSIONAL):
--- DROP TABLE IF EXISTS users CASCADE;
--- DROP TABLE IF EXISTS cards CASCADE;
-
 -- 1. TABEL CARDS (Hanya: id, nama_kartu, deskripsi)
 CREATE TABLE IF NOT EXISTS cards (
-  id           INTEGER PRIMARY KEY, -- 1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati
+  id           INTEGER PRIMARY KEY, -- 1: Jarak Giri, 2: Jarak Lengkara, 3: Jarak Srigati
   nama_kartu   TEXT NOT NULL,
   deskripsi    TEXT NOT NULL
 );
 
--- Isi Data 5 Kartu Beserta Deskripsinya
+-- Isi Data 3 Kartu 
 INSERT INTO cards (id, nama_kartu, deskripsi)
 VALUES 
-  (
-    1, 
-    'Sang Sri', 
-    'Sang Sri adalah pancaran Dewi Kesuburan dan Kemakmuran. Kamu dianugerahi tarikan energi emas yang membuka pintu-pintu kemudahan, rezeki berlimpah, dan keharmonisan hidup. Hadirmu menumbuhkan dan menyuburkan apa pun yang kamu sentuh.'
-  ),
-  (
-    2, 
-    'Sang Lungguh', 
-    'Lungguh merepresentasikan kedudukan takhta tertinggi. Kamu dilahirkan membawa aura wibawa alami, integritas yang disegani, serta kepercayaan mendalam dari sekelilingmu. Langkahmu ditakdirkan untuk memimpin dan membimbing dengan kehormatan.'
-  ),
-  (
-    3, 
-    'Sang Gedhong', 
-    'Gedhong melambangkan sang arsitek peradaban agung. Kamu memiliki ketajaman visi untuk membangun sesuatu yang monumental dari ketiadaan hingga menjadi mahakarya abadi. Energi ciptaan dan daya stabilitasmu menjadi pilar bagi banyak orang.'
-  ),
-  (
-    4, 
-    'Sang Lara', 
-    'Lara adalah sang burung Phoenix yang ditempa api penempaan jiwa. Ketangguhan batinmu luar biasa; setiap badai dan rintangan tidak pernah memadamkanmu, melainkan justru mengasahmu menjadi berlian tak ternilai yang bangkit berkali-kali lebih kuat dan bercahaya.'
-  ),
-  (
-    5, 
-    'Sang Pati', 
-    'Pati dalam filosofi esoteris adalah gerbang transendensi dan kelahiran kembali. Kamu dianugerahi mata batin yang tajam, kedalaman spiritual, dan intuisi langka yang mampu menyingkap tabir rahasia kehidupan serta mengubah kegelapan menjadi pencerahan murni.'
-  )
+  (1, 'Jarak Giri', 'Namamu membawa jejak Jarak Giri...'),
+  (2, 'Jarak Lengkara', 'Namamu membawa jejak Jarak Lengkara...'),
+  (3, 'Jarak Srigati', 'Namamu membawa jejak Jarak Srigati...')
+ON CONFLICT (id) DO UPDATE SET
+  nama_kartu  = EXCLUDED.nama_kartu,
+  deskripsi   = EXCLUDED.deskripsi;
 ON CONFLICT (id) DO UPDATE SET
   nama_kartu  = EXCLUDED.nama_kartu,
   deskripsi   = EXCLUDED.deskripsi;
