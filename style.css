@@ -494,7 +494,7 @@ body {
   }
 
   .hero-title-svg {
-    max-width: 60vw; 
+    max-width: 85vw; 
   }
 }
 
@@ -711,7 +711,7 @@ body {
 
 .form-label {
   font-family: "Helvetica", "Arial", sans-serif !important;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: bold;
   letter-spacing: 0.1em;
   text-transform: none;
@@ -727,9 +727,9 @@ body {
   background: rgba(4, 3, 10, 0.6);
   border: 1.5px solid var(--clr-border);
   border-radius: var(--radius-md);
-  padding: 0.9em 1.2em;
+  padding: 0.7em 1.2em;
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: var(--clr-text-primary);
   outline: none;
   transition: all var(--transition-base);
@@ -779,7 +779,7 @@ body {
 .submit-btn {
   position: relative;
   width: 100%;
-  padding: 1em 2em;
+  padding: 0.85em 1.5em;
   /* Warna dasar: gradasi merah terang ke merah gelap */
   background: linear-gradient(135deg, #d32f2f, #8e0000); 
   border: none; 
@@ -819,7 +819,7 @@ body {
 
 .btn-text {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   font-weight: 600;
   font-style: normal;
   color: #ffffff;
