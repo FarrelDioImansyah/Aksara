@@ -208,7 +208,7 @@ async function simpanHasilPetangan(data) {
     const userPayload = {
       nama_latin:     (namaLatin || '').trim(),
       nama_panggilan: (namaPanggilan || '').trim(),
-      Hanacaraka:    Hanacaraka || '', // TAMBAHAN INI
+      Hanacaraka:    data.Hanacaraka || '', // TAMBAHAN INI
       id_kartu:       idKartu, // Relasi ke cards(id) (1: Sri, 2: Lungguh, 3: Gedhong, 4: Lara, 5: Pati)
     };
 
