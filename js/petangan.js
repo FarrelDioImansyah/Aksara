@@ -32,10 +32,10 @@ function getRandomCard() {
  */
 function validasiNama(nama) {
   const trimmed = nama.trim();
-  if (!trimmed) return { valid: false, error: '' };
+  if (!trimmed) return { valid: false, error: 'Nama tidak boleh kosong' };
 
-  if (trimmed.length < 2) return { valid: false, error: 'Nama minimal 2 karakter.' };
-  if (trimmed.length > 20) return { valid: false, error: 'Nama maksimal 20 karakter.' };
+  //if (trimmed.length < 2) return { valid: false, error: 'Nama minimal 2 karakter.' };
+  if (trimmed.length > 15) return { valid: false, error: 'Nama maksimal 15 karakter.' };
   return { valid: true };
 }
 
