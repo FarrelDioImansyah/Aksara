@@ -981,7 +981,7 @@ body {
   margin: 0 auto;
   
   /* Titik Y presisi berdasarkan Y = 927 di resolusi 1920 */
-  top: 47.3%; /* Ubah angka ini menjadi lebih besar untuk menurunkannya */
+  top: 47.4%; /* Ubah angka ini menjadi lebih besar untuk menurunkannya */
   width: 55%; /* Berdasarkan lebar 592px / 1080px */
   height: 5%;
 
@@ -1005,7 +1005,7 @@ body {
 /* 3. Penyesuaian khusus media query HP */
 @media (max-width: 768px) {
   .tarot-custom-name {
-    top: 47.4%;
+    top: 47.6%;
     font-size: 4cqw; /* Menjaga teks tetap fit di dalam pita pada layar HP */
   } 
 }
