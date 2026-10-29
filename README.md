@@ -193,3 +193,126 @@ Lihat panduan lengkap di [`UNITY_INTEGRATION.md`](./UNITY_INTEGRATION.md)
 ---
 
 *Sasmita Aksara Web & Projection System — 2026*
+
+## input nama untuk testing
+Ran command: `node -e "
+const h = require('./js/hanacaraka.js');
+const p = require('./js/petangan.js');
+
+const candidates = [
+  // Cek untuk Sisa 1 (Sri)
+  'budi', 'adi', 'wawan', 'dian', 'dewi', 'ratna', 'siti', 'maya',
+  // Cek untuk Sisa 2 (Lungguh)
+  'farrel dio', 'dono', 'kasino', 'indro', 'bambang', 'rizki',
+  // Cek untuk Sisa 3 (Gedhong)
+  'joko', 'bayu', 'agus', 'surya', 'bagus', 'teguh', 'eko',
+  // Cek untuk Sisa 4 (Lara)
+  'iswahyudi', 'ari', 'wahyu', 'rudi', 'hendra', 'anton',
+  // Cek untuk Sisa 0 (Pati)
+  'yanto', 'tono', 'supri', 'tri', 'putra', 'dimas'
+];
+
+candidates.forEach(name => {
+  const t = h.transliterasiHanacaraka(name);
+  const res = p.hitungPetangan(t.totalNeptu);
+  console.log(name.padEnd(15), '-> Neptu:', String(t.totalNeptu).padEnd(4), 'Sisa:', res.sisa, res.hasil.nama);
+});
+"`
+Ran command: `node -e "
+const h = require('./js/hanacaraka.js');
+const p = require('./js/petangan.js');
+
+const names = ['Agus', 'Farrel Dio', 'Joko', 'Iswahyudi', 'Dimas'];
+
+names.forEach(name => {
+  const t = h.transliterasiHanacaraka(name);
+  const res = p.hitungPetangan(t.totalNeptu);
+  console.log(JSON.stringify({
+    nama: name,
+    neptu: t.totalNeptu,
+    kartu: res.hasil.nomorTarot,
+    gelar: res.hasil.nama,
+    sisa: res.sisa,
+    formula: res.formula
+  }, null, 2));
+});
+"`
+
+Berikut adalah **5 nama** yang masing-masing tepat menghasilkan **1 kartu berbeda** dari siklus 5 Arkana Tarot Jawa:
+
+---
+
+### 1. Kartu I: **Sang Sri** (👑 *The Empress of Abundance*)
+* **Nama**: **`Agus`**
+* **Neptu**: `26`
+* **Perhitungan**: $26 \div 5 = 5 \quad\text{sisa}\quad \mathbf{1}$
+* **Rincian Fonem**:
+  * `a` (Ha) = 1
+  * `gu` (Ga) = 17
+  * `s` (Sa) = 8
+  * $\text{Total} = 1 + 17 + 8 = 26$
+
+---
+
+### 2. Kartu II: **Sang Lungguh** (🏛️ *The Sovereign Hierarch*)
+* **Nama**: **`Farrel Dio`**
+* **Neptu**: `37`
+* **Perhitungan**: $37 \div 5 = 7 \quad\text{sisa}\quad \mathbf{2}$
+* **Rincian Fonem**:
+  * `fa` (Pa) = 12
+  * `r` (Ra) = 4
+  * `re` (Ra) = 4
+  * `l` (La) = 10
+  * `di` (Da) = 6
+  * `o` (Ha) = 1
+  * $\text{Total} = 12 + 4 + 4 + 10 + 6 + 1 = 37$
+
+---
+
+### 3. Kartu III: **Sang Gedhong** (🏯 *The Grand Architect*)
+* **Nama**: **`Joko`**
+* **Neptu**: `18`
+* **Perhitungan**: $18 \div 5 = 3 \quad\text{sisa}\quad \mathbf{3}$
+* **Rincian Fonem**:
+  * `jo` (Ja) = 13
+  * `ko` (Ka) = 5
+  * $\text{Total} = 13 + 5 = 18$
+
+---
+
+### 4. Kartu IV: **Sang Lara** (🔥 *The Phoenix Warrior*)
+* **Nama**: **`Iswahyudi`**
+* **Neptu**: `39`
+* **Perhitungan**: $39 \div 5 = 7 \quad\text{sisa}\quad \mathbf{4}$
+* **Rincian Fonem**:
+  * `i` (Ha) = 1
+  * `s` (Sa) = 8
+  * `wa` (Wa) = 9
+  * `h` (Ha) = 1
+  * `yu` (Ya) = 14
+  * `di` (Da) = 6
+  * $\text{Total} = 1 + 8 + 9 + 1 + 14 + 6 = 39$
+
+---
+
+### 5. Kartu V: **Sang Pati** (🌙 *The Mystic Alchemist*)
+* **Nama**: **`Dimas`**
+* **Neptu**: `30`
+* **Perhitungan**: $30 \div 5 = 6 \quad\text{sisa}\quad \mathbf{0}$
+* **Rincian Fonem**:
+  * `di` (Da) = 6
+  * `ma` (Ma) = 16
+  * `s` (Sa) = 8
+  * $\text{Total} = 6 + 16 + 8 = 30$
+
+---
+
+### Ringkasan untuk Testing di Web:
+
+| No | Input Nama | Total Neptu | Sisa Bagi 5 | Kartu Tarot yang Keluar |
+| :---: | :--- | :---: | :---: | :--- |
+| 1 | **Agus** | 26 | **1** | **Kartu I · Sang Sri** (Emas) |
+| 2 | **Farrel Dio** | 37 | **2** | **Kartu II · Sang Lungguh** (Biru) |
+| 3 | **Joko** | 18 | **3** | **Kartu III · Sang Gedhong** (Ungu) |
+| 4 | **Iswahyudi** | 39 | **4** | **Kartu IV · Sang Lara** (Oranye Api) |
+| 5 | **Dimas** | 30 | **0** | **Kartu V · Sang Pati** (Perak Mistik) | 

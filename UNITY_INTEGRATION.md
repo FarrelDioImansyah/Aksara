@@ -52,7 +52,7 @@ Tambahkan package berikut via **Unity Package Manager** atau manual:
 | `url_kartu` | `TEXT` | Link gambar kartu PNG di storage `CardPetangen` |
 
 ---
-
+http://localhost:8000.
 ### 3. Opsi A — Supabase C# SDK (Direkomendasikan)
 
 ```csharp
