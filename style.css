@@ -1005,7 +1005,7 @@ body {
 /* 3. Penyesuaian khusus media query HP */
 @media (max-width: 768px) {
   .tarot-custom-name {
-    top: 47.2%;
+    top: 47.4%;
     font-size: 4cqw; /* Menjaga teks tetap fit di dalam pita pada layar HP */
   } 
 }
