@@ -13,41 +13,41 @@
 // ============================================================
 const DOM = {
   // Form & Layout
-  form:             document.getElementById('petanganForm'),
+  form: document.getElementById('petanganForm'),
   formInputSection: document.getElementById('formInputSection'),
-  homepageTitle:    document.getElementById('homepageTitleSection'), // Untuk menyembunyikan title
-  namaInput:        document.getElementById('namaInput'),
-  namaError:        document.getElementById('namaInputError'),
-  submitBtn:        document.getElementById('submitBtn'),
-  resetBtn:         document.getElementById('resetBtn'),
-  downloadCardBtn:  document.getElementById('downloadCardBtn'),
+  homepageTitle: document.getElementById('homepageTitleSection'), // Untuk menyembunyikan title
+  namaInput: document.getElementById('namaInput'),
+  namaError: document.getElementById('namaInputError'),
+  submitBtn: document.getElementById('submitBtn'),
+  resetBtn: document.getElementById('resetBtn'),
+  downloadCardBtn: document.getElementById('downloadCardBtn'),
 
   // Status badge
-  statusDot:        document.getElementById('supabaseStatusDot'),
-  statusText:       document.getElementById('supabaseStatusText'),
+  statusDot: document.getElementById('supabaseStatusDot'),
+  statusText: document.getElementById('supabaseStatusText'),
 
   // Results — Format Custom Graphic Card
-  resultContainer:  document.getElementById('resultContainer'),
-  tarotCustomCard:  document.getElementById('tarotCustomCard'),
-  tarotCustomBg:    document.getElementById('tarotCustomBg'),
-  tarotCustomName:  document.getElementById('tarotCustomName'),
+  resultContainer: document.getElementById('resultContainer'),
+  tarotCustomCard: document.getElementById('tarotCustomCard'),
+  tarotCustomBg: document.getElementById('tarotCustomBg'),
+  tarotCustomName: document.getElementById('tarotCustomName'),
   // tarotCustomDesc sudah dihapus dari HTML sesuai instruksi
-  
-  supabaseMessage:  document.getElementById('supabaseMessage'),
-  supabaseIndicator:document.getElementById('supabaseIndicator'),
+
+  supabaseMessage: document.getElementById('supabaseMessage'),
+  supabaseIndicator: document.getElementById('supabaseIndicator'),
 
   // Loading
-  loadingOverlay:   document.getElementById('loadingOverlay'),
-  loadingProgress:  document.getElementById('loadingProgress'),
+  loadingOverlay: document.getElementById('loadingOverlay'),
+  loadingProgress: document.getElementById('loadingProgress'),
 };
 
 // ============================================================
 // 2. APPLICATION STATE
 // ============================================================
 const STATE = {
-  isProcessing:   false,
-  lastResult:     null,
-  sessionId:      'sess_' + Math.random().toString(36).substr(2, 9),
+  isProcessing: false,
+  lastResult: null,
+  sessionId: 'sess_' + Math.random().toString(36).substr(2, 9),
 };
 
 // ============================================================
@@ -224,10 +224,10 @@ async function handleFormSubmit(e) {
 
     // Simpan data kalkulasi ke database
     const supaResult = await window.SupabaseClient.simpanHasilPetangan({
-      idKartu:       hasilKartu.idKartu,
-      namaLatin:     namaLengkap,
+      idKartu: hasilKartu.idKartu,
+      namaLatin: namaLengkap,
       namaPanggilan: namaLengkap, // Disamakan karena sudah tidak ada input nama panggilan
-      Hanacaraka:    aksaraJawa, // TAMBAHAN INI
+      Hanacaraka: aksaraJawa, // TAMBAHAN INI
     });
 
     // Upload gambar kartu ke Supabase Storage (Bucket: CardPetangen)
@@ -288,11 +288,11 @@ function renderFinalResult(hasilKartu, namaLengkap) {
     if (DOM.tarotCustomBg) {
       DOM.tarotCustomBg.src = hasilKartu.bgCard;
     }
-    
+
     // Set dan resize nama otomatis
     if (DOM.tarotCustomName) {
       DOM.tarotCustomName.textContent = namaLengkap;
-      
+
       // Auto-resize Font Size agar fit di dalam div pita
       /*let fontSize = 1.95; // Base rem (ukuran awal maksimal)
       DOM.tarotCustomName.style.fontSize = fontSize + 'rem';
@@ -313,7 +313,11 @@ function renderFinalResult(hasilKartu, namaLengkap) {
 
 /**
  * Render kartu ke elemen HTML5 Canvas untuk fitur unduh
- * Hanya menggambar BG Kartu dan Teks Nama yang auto-scale
+ * Disesuaikan presisi dengan style CSS di website:
+ * - Titik Y: 956 (center vertikal dari top: 47.3% + height: 5% pada resolusi 1920)
+ * - Font size: ~46px (setara 4.2cqw dari lebar 1080px)
+ * - Letter-spacing: 0.08em
+ * - Text shadow halus
  * @returns {Promise<HTMLCanvasElement>}
  */
 function generateCardCanvas() {
@@ -322,17 +326,17 @@ function generateCardCanvas() {
       return reject(new Error('Belum ada data kartu.'));
     }
 
-    // Pastikan font Google Font 'Cinzel Decorative' sudah ter-load sebelum render canvas
+    // Pastikan font browser sudah siap sebelum render canvas
     if (document.fonts && document.fonts.ready) {
       await document.fonts.ready;
     }
 
     const { hasilKartu, namaLengkap } = STATE.lastResult;
     const canvas = document.createElement('canvas');
-    
-    // Resolusi default gambar kartu (sesuaikan jika resolusi asli gambar berbeda)
-    canvas.width = 1080; 
-    canvas.height = 1920; 
+
+    // Resolusi default gambar kartu (1080 x 1920)
+    canvas.width = 1080;
+    canvas.height = 1920;
     const ctx = canvas.getContext('2d');
 
     const img = new Image();
@@ -341,35 +345,42 @@ function generateCardCanvas() {
       // 1. Gambar latar belakang kartu utuh
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // 2. Render Nama Dinamis
-      const centerX = 540; // Titik tengah X (1080 / 2)
-      
-      // Y = 915 mbah setengah tinggi kotak (60 / 2 = 30) agar teks jatuh persis di tengah
-      const centerY = 910; 
-      
-      const maxWidth = 580; // Batas lebar berdasarkan bounding box (593px) dikurangi sedikit margin aman
+      // 2. Render Nama Dinamis (Presisi sesuai CSS website)
+      const centerX = 540;   // Titik tengah horizontal (1080 / 2)
+      const centerY = 956;   // Titik tengah vertikal pita nama (top 47.3% + 2.5% di 1920px)
+      const maxWidth = 580;  // Batas lebar maksimal pita nama
 
-      let fontSize = 65; // Ukuran font dasar di resolusi besar
-      
-      ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
-      ctx.fillStyle = '#1a1612';
-      ctx.textAlign = 'center';
-      
-      // textBaseline 'middle' akan memposisikan titik tengah vertikal teks persis di centerY
-      ctx.textBaseline = 'middle'; 
+      // 4.2cqw dari lebar 1080px = ~45.4px (dibulatkan 46px)
+      let fontSize = 46;
 
-      // Auto-scale font untuk Canvas jika teks terlalu panjang
-      while (ctx.measureText(namaLengkap).width > maxWidth && fontSize > 25) {
-        fontSize -= 2;
-        ctx.font = `900 ${fontSize}px "Helvetica", "Arial", sans-serif`;
+      // Set letter spacing sama persis dengan CSS (0.08em)
+      if ('letterSpacing' in ctx) {
+        ctx.letterSpacing = '0.08em';
       }
 
-      // Cetak teks pada koordinat presisi (540, 957)
-      ctx.fillText(namaLengkap, centerX, centerY); 
+      ctx.font = `900 ${fontSize}px Helvetica, Arial, sans-serif`;
+      ctx.fillStyle = '#1a1612';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // Text Shadow halus sama seperti di CSS web
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 2;
+      ctx.shadowBlur = 4;
+
+      // Auto-scale font jika teks nama terlalu panjang
+      while (ctx.measureText(namaLengkap).width > maxWidth && fontSize > 20) {
+        fontSize -= 1;
+        ctx.font = `900 ${fontSize}px Helvetica, Arial, sans-serif`;
+      }
+
+      // Cetak teks nama tepat di tengah pita
+      ctx.fillText(namaLengkap, centerX, centerY);
 
       resolve(canvas);
     };
-    img.onerror = (e) => reject(new Error('Gagal memuat gambar kartu untuk export.'));
+    img.onerror = () => reject(new Error('Gagal memuat gambar kartu untuk export.'));
     img.src = hasilKartu.bgCard;
   });
 }
@@ -414,7 +425,7 @@ async function handleDownloadCard() {
 // ============================================================
 function updateSupabaseUI(status, result = null) {
   const indicator = DOM.supabaseIndicator;
-  const message   = DOM.supabaseMessage;
+  const message = DOM.supabaseMessage;
 
   indicator.className = 'supa-indicator';
 
