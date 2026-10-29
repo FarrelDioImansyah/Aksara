@@ -746,11 +746,6 @@ body {
   background: rgba(4, 3, 10, 0.8);
 }
 
-.form-input[aria-invalid="true"] {
-  border-color: #f87171 !important;
-  box-shadow: 0 0 10px rgba(248, 113, 113, 0.4) !important;
-}
-
 .form-input:focus+.input-glow {
   opacity: 1;
 }
@@ -986,7 +981,7 @@ body {
   margin: 0 auto;
   
   /* Titik Y presisi berdasarkan Y = 927 di resolusi 1920 */
-  top: 47.8%; /* Ubah angka ini menjadi lebih besar untuk menurunkannya */
+  top: 47.5%; /* Ubah angka ini menjadi lebih besar untuk menurunkannya */
   width: 55%; /* Berdasarkan lebar 592px / 1080px */
   height: 5%;
 
@@ -995,7 +990,7 @@ body {
   justify-content: center;
   text-align: center;
   font-family: Helvetica, Arial, sans-serif !important;
-  font-size: 4cqw !important; /* Ukuran font mengunci proporsional terhadap lebar kartu */
+  font-size: 4.2cqw !important; /* Ukuran font mengunci proporsional terhadap lebar kartu */
   font-weight: 900;
   letter-spacing: 0.08em;
   color: #1a1612 !important;
@@ -1010,7 +1005,7 @@ body {
 /* 3. Penyesuaian khusus media query HP */
 @media (max-width: 768px) {
   .tarot-custom-name {
-    top: 47.8%;
+    top: 47.5%;
     font-size: 4cqw; /* Menjaga teks tetap fit di dalam pita pada layar HP */
   }
 }
